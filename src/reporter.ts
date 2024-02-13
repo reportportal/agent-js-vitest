@@ -16,7 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import { File, Reporter, Task, TaskResultPack, UserConsoleLog } from 'vitest';
+import { File, Reporter, Task, TaskResultPack, UserConsoleLog, TaskResult } from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -95,16 +95,29 @@ export class RPReporter implements Reporter {
   }
 
   startDescendants(descendant: Task, parentId?: string) {
+    const startTime = this.client.helpers.now();
     const isSuite = descendant.type === 'suite';
     // TODO: add codeRef
     const startTestItemObj: StartTestObjType = {
       name: descendant.name,
-      startTime: this.client.helpers.now(),
+      startTime,
       type: isSuite ? TEST_ITEM_TYPES.SUITE : TEST_ITEM_TYPES.STEP,
     };
     const testItemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
     this.addRequestToPromisesQueue(testItemObj.promise, 'Failed to start test item.');
     const tempId = testItemObj.tempId;
+
+    // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
+    if (descendant.mode === 'skip') {
+      const finishTestItemObj: FinishTestItemObjType = {
+        endTime: startTime,
+        status: STATUSES.SKIPPED,
+      };
+      const { promise } = this.client.finishTestItem(tempId, finishTestItemObj);
+      this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');
+
+      return;
+    }
 
     this.testItems.set(descendant.id, {
       id: tempId,
@@ -117,33 +130,27 @@ export class RPReporter implements Reporter {
     }
   }
 
-  // TODO: handle skip tests
   // TODO: check with bail
   // TODO: start and finish retries synthetically?
   // https://github.com/vitest-dev/vitest/discussions/4729
   // Finish suites, tests
   onTaskUpdate(packs: TaskResultPack[]) {
-    // reverse the packs to finish descendants first
+    // Reverse the result packs to finish descendants first
     const packsReversed = [...packs];
     packsReversed.reverse();
 
-    for (const taskResultPack of packsReversed) {
-      const [id, taskResult] = taskResultPack;
+    for (const [id, taskResult] of packsReversed) {
       const testItemId = this.testItems.get(id)?.id;
       if (!testItemId) {
         continue;
       }
 
-      const testItemEndTime = taskResult.startTime + taskResult.duration;
-      const finishTestItemObj: FinishTestItemObjType = {
-        endTime: testItemEndTime,
-        status: taskResult.state === 'fail' ? STATUSES.FAILED : STATUSES.PASSED,
-      };
+      const finishTestItemObj = this.getFinishTestItemObj(taskResult);
 
       if (taskResult.errors?.length) {
         const error = taskResult.errors[0];
-        const logRq = {
-          time: testItemEndTime,
+        const logRq: LogRQ = {
+          time: finishTestItemObj.endTime,
           level: LOG_LEVELS.ERROR,
           message: error.stack,
         };
@@ -152,7 +159,29 @@ export class RPReporter implements Reporter {
 
       const { promise } = this.client.finishTestItem(testItemId, finishTestItemObj);
       this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');
+      this.testItems.delete(id);
     }
+  }
+
+  getFinishTestItemObj(taskResult: TaskResult): FinishTestItemObjType {
+    const finishTestItemObj: FinishTestItemObjType = {
+      status: STATUSES.PASSED,
+    };
+
+    switch (taskResult.state) {
+      case 'pass':
+      case 'fail':
+        finishTestItemObj.status = taskResult.state === 'fail' ? STATUSES.FAILED : STATUSES.PASSED;
+        finishTestItemObj.endTime = taskResult.startTime + taskResult.duration;
+        break;
+      case 'skip':
+        finishTestItemObj.status = STATUSES.SKIPPED;
+        break;
+      default:
+        break;
+    }
+
+    return finishTestItemObj;
   }
 
   sendLog(testItemId: string, logRq: LogRQ): void {
@@ -173,7 +202,7 @@ export class RPReporter implements Reporter {
   onUserConsoleLog(log: UserConsoleLog) {}
 
   // Finish launch
-  async onFinished(files?: File[], errors?: unknown[]) {
+  async onFinished() {
     if (!this.config.launchId) {
       const { promise } = this.client.finishLaunch(this.launchId, {
         endTime: this.client.helpers.now(),
