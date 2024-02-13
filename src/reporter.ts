@@ -122,10 +122,11 @@ export class RPReporter implements Reporter {
     const tempId = testItemObj.tempId;
 
     // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
-    if (mode === TASK_STATE.skip) {
+    if (mode === TASK_STATE.skip || mode === TASK_STATE.todo) {
       const finishTestItemObj: FinishTestItemObjType = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
+        attributes: mode === TASK_STATE.todo ? [{ value: TASK_STATE.todo }] : [],
       };
       const { promise } = this.client.finishTestItem(tempId, finishTestItemObj);
       this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');

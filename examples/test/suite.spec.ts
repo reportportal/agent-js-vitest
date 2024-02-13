@@ -8,17 +8,23 @@ describe('suite name', () => {
   it('dynamically skipped test', (context) => {
     context.skip();
     expect(1 + 1).eq(2);
-  })
+  });
+
+  it.todo('todo test', () => {
+    assert.equal(Math.sqrt(4), 2);
+  });
+
+  it.fails('Should be failed', () => {
+    assert.equal(Math.sqrt(4), 2);
+  });
 
   it('snapshot', () => {
     console.log('12345');
     expect({ foo: 'bar' }).toMatchSnapshot();
-  })
+  });
 
-  describe('nested describe', () => {
-    it('foo', () => {
-      assert.equal(Math.sqrt(4), 3);
-    })
+  it('foo', () => {
+    assert.equal(Math.sqrt(4), 3);
   });
 });
 
