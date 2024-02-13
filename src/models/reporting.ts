@@ -19,7 +19,7 @@ import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
 export interface StartLaunchObjType {
-  startTime?: Date | number;
+  startTime?: number;
   attributes?: Array<Attribute>;
   description?: string;
   name?: string;
@@ -34,14 +34,14 @@ export interface StartTestObjType {
   type: TEST_ITEM_TYPES;
   attributes?: Array<Attribute>;
   description?: string;
-  startTime?: Date | number;
+  startTime?: number;
   codeRef?: string;
   testCaseId?: string;
   retry?: boolean;
 }
 
 export interface FinishTestItemObjType {
-  endTime?: Date | number;
+  endTime?: number;
   status?: string;
   attributes?: Attribute[];
   description?: string;

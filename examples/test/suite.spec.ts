@@ -1,11 +1,12 @@
 import { assert, describe, expect, it } from 'vitest';
 
 describe('suite name', () => {
-  it('foo', () => {
+  it.skip('foo', () => {
     assert.equal(Math.sqrt(4), 2);
   })
 
-  it('bar', () => {
+  it('bar', (context) => {
+    context.skip();
     expect(1 + 1).eq(2);
   })
 
