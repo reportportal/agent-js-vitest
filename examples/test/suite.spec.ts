@@ -12,4 +12,7 @@ describe('suite name', () => {
   it('snapshot', () => {
     expect({ foo: 'bar' }).toMatchSnapshot();
   })
-})
+});
+
+describe('empty suite', () => {
+});

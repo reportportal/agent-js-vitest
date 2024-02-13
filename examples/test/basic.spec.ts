@@ -11,7 +11,7 @@ test('Math.sqrt()', () => {
 
 test('Squared', () => {
   expect(squared(2)).toBe(4);
-  expect(squared(12)).toBe(144);
+  expect(squared(12)).toBe(1440);
 });
 
 test('JSON', () => {
