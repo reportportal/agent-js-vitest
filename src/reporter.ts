@@ -16,17 +16,17 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import { File, Reporter, Task, TaskResultPack, UserConsoleLog, TaskResult } from 'vitest';
+import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog } from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
+  LogRQ,
   ReportPortalConfig,
   StartLaunchObjType,
   StartTestObjType,
-  LogRQ,
 } from './models';
 import { getAgentInfo, getSystemAttributes, promiseErrorHandler } from './utils';
-import { LAUNCH_MODES, STATUSES, TEST_ITEM_TYPES, LOG_LEVELS } from './constants';
+import { LAUNCH_MODES, LOG_LEVELS, STATUSES, TEST_ITEM_TYPES, TASK_STATE } from './constants';
 
 export interface TestItem {
   id: string;
@@ -108,7 +108,7 @@ export class RPReporter implements Reporter {
     const tempId = testItemObj.tempId;
 
     // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
-    if (descendant.mode === 'skip') {
+    if (descendant.mode === TASK_STATE.skip) {
       const finishTestItemObj: FinishTestItemObjType = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
@@ -169,12 +169,13 @@ export class RPReporter implements Reporter {
     };
 
     switch (taskResult.state) {
-      case 'pass':
-      case 'fail':
-        finishTestItemObj.status = taskResult.state === 'fail' ? STATUSES.FAILED : STATUSES.PASSED;
+      case TASK_STATE.pass:
+      case TASK_STATE.fail:
+        finishTestItemObj.status =
+          taskResult.state === TASK_STATE.fail ? STATUSES.FAILED : STATUSES.PASSED;
         finishTestItemObj.endTime = taskResult.startTime + taskResult.duration;
         break;
-      case 'skip':
+      case TASK_STATE.skip:
         finishTestItemObj.status = STATUSES.SKIPPED;
         break;
       default:
@@ -198,8 +199,18 @@ export class RPReporter implements Reporter {
     this.addRequestToPromisesQueue(promise, 'Failed to send log.');
   }
 
-  // Send log, need to define the correct log parent
-  onUserConsoleLog(log: UserConsoleLog) {}
+  // Send test item/launch log
+  onUserConsoleLog({ content, taskId, time, type }: UserConsoleLog) {
+    const testItemId = this.testItems.get(taskId)?.id;
+
+    const logRq: LogRQ = {
+      time: time,
+      level: type === 'stderr' ? LOG_LEVELS.ERROR : LOG_LEVELS.INFO,
+      message: content,
+    };
+    // Send log to launch in case of target test item id doesn't exist
+    this.sendLog(testItemId || this.launchId, logRq);
+  }
 
   // Finish launch
   async onFinished() {

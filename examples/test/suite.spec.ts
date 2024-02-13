@@ -11,9 +11,11 @@ describe('suite name', () => {
   })
 
   it('snapshot', () => {
+    console.log('12345');
     expect({ foo: 'bar' }).toMatchSnapshot();
   })
 });
 
 describe('empty suite', () => {
+  console.log('empty suite log');
 });
