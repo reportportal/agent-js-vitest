@@ -16,7 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog } from 'vitest';
+import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -25,7 +25,13 @@ import {
   StartLaunchObjType,
   StartTestObjType,
 } from './models';
-import { getAgentInfo, getSystemAttributes, promiseErrorHandler } from './utils';
+import {
+  getAgentInfo,
+  getSystemAttributes,
+  promiseErrorHandler,
+  getCodeRef,
+  getBasePath,
+} from './utils';
 import { LAUNCH_MODES, LOG_LEVELS, STATUSES, TEST_ITEM_TYPES, TASK_STATE } from './constants';
 
 export interface TestItem {
@@ -48,6 +54,8 @@ export class RPReporter implements Reporter {
 
   testItems: Map<string, TestItem>;
 
+  rootDir: string;
+
   constructor(config: ReportPortalConfig) {
     this.config = {
       ...config,
@@ -66,7 +74,9 @@ export class RPReporter implements Reporter {
   }
 
   // Start launch
-  onInit(): void {
+  onInit(vitest: Vitest): void {
+    this.rootDir = vitest.runner.root;
+
     const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
       this.config;
     const systemAttributes: Attribute[] = getSystemAttributes(skippedIssue);
@@ -90,25 +100,29 @@ export class RPReporter implements Reporter {
   // Start suites, tests
   onCollected(files: File[] = []) {
     for (const file of files) {
-      this.startDescendants(file);
+      const basePath = getBasePath(file.filepath, this.rootDir);
+      this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: Task, parentId?: string) {
+  startDescendants(descendant: Task, basePath: string, parentId?: string) {
+    const { name, id, type, mode } = descendant;
     const startTime = this.client.helpers.now();
-    const isSuite = descendant.type === 'suite';
-    // TODO: add codeRef
+    const isSuite = type === 'suite';
+    const codeRef = getCodeRef(basePath, parentId ? name : '');
+
     const startTestItemObj: StartTestObjType = {
-      name: descendant.name,
+      name: name,
       startTime,
       type: isSuite ? TEST_ITEM_TYPES.SUITE : TEST_ITEM_TYPES.STEP,
+      codeRef,
     };
     const testItemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
     this.addRequestToPromisesQueue(testItemObj.promise, 'Failed to start test item.');
     const tempId = testItemObj.tempId;
 
     // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
-    if (descendant.mode === TASK_STATE.skip) {
+    if (mode === TASK_STATE.skip) {
       const finishTestItemObj: FinishTestItemObjType = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
@@ -119,13 +133,13 @@ export class RPReporter implements Reporter {
       return;
     }
 
-    this.testItems.set(descendant.id, {
+    this.testItems.set(id, {
       id: tempId,
     });
 
     if (isSuite) {
       for (const innerDescendant of descendant.tasks) {
-        this.startDescendants(innerDescendant, tempId);
+        this.startDescendants(innerDescendant, codeRef, tempId);
       }
     }
   }

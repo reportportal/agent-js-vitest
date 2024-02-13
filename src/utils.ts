@@ -15,6 +15,7 @@
  *
  */
 
+import { normalize, sep } from 'node:path';
 // @ts-ignore
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
 import { Attribute } from './models';
@@ -52,3 +53,9 @@ export const promiseErrorHandler = (promise: Promise<void>, message = ''): Promi
   promise.catch((err) => {
     console.error(message, err);
   });
+
+export const getBasePath = (filePath: string, rootDir: string) =>
+  filePath.replace(rootDir, '').replace(new RegExp('\\'.concat(sep), 'g'), '/');
+
+export const getCodeRef = (basePath: string, itemTitle: string): string =>
+  normalize([basePath, itemTitle].join('/'));
