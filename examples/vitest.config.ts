@@ -25,5 +25,6 @@ export default defineConfig({
     sequence: {
       concurrent: true, // TODO: check
     },
+    retry: 1,
   },
 });
