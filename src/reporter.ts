@@ -16,7 +16,16 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog } from 'vitest';
+import {
+  File,
+  Reporter,
+  Task,
+  TaskResult,
+  TaskResultPack,
+  UserConsoleLog,
+  Vitest,
+  TaskState,
+} from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -25,8 +34,22 @@ import {
   StartLaunchObjType,
   StartTestObjType,
 } from './models';
-import { getAgentInfo, getSystemAttributes, promiseErrorHandler } from './utils';
-import { LAUNCH_MODES, LOG_LEVELS, STATUSES, TEST_ITEM_TYPES, TASK_STATE } from './constants';
+import {
+  getAgentInfo,
+  getSystemAttributes,
+  promiseErrorHandler,
+  getCodeRef,
+  getBasePath,
+} from './utils';
+import {
+  LAUNCH_MODES,
+  LOG_LEVELS,
+  STATUSES,
+  TEST_ITEM_TYPES,
+  TASK_MODE,
+  TASK_STATUS,
+  FINISHED_STATES,
+} from './constants';
 
 export interface TestItem {
   id: string;
@@ -48,6 +71,8 @@ export class RPReporter implements Reporter {
 
   testItems: Map<string, TestItem>;
 
+  rootDir: string;
+
   constructor(config: ReportPortalConfig) {
     this.config = {
       ...config,
@@ -66,7 +91,9 @@ export class RPReporter implements Reporter {
   }
 
   // Start launch
-  onInit(): void {
+  onInit(vitest: Vitest): void {
+    this.rootDir = vitest.runner.root;
+
     const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
       this.config;
     const systemAttributes: Attribute[] = getSystemAttributes(skippedIssue);
@@ -90,28 +117,33 @@ export class RPReporter implements Reporter {
   // Start suites, tests
   onCollected(files: File[] = []) {
     for (const file of files) {
-      this.startDescendants(file);
+      const basePath = getBasePath(file.filepath, this.rootDir);
+      this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: Task, parentId?: string) {
+  startDescendants(descendant: Task, basePath: string, parentId?: string) {
+    const { name, id, type, mode } = descendant;
     const startTime = this.client.helpers.now();
-    const isSuite = descendant.type === 'suite';
-    // TODO: add codeRef
+    const isSuite = type === 'suite';
+    const codeRef = getCodeRef(basePath, parentId ? name : '');
+
     const startTestItemObj: StartTestObjType = {
-      name: descendant.name,
+      name: name,
       startTime,
       type: isSuite ? TEST_ITEM_TYPES.SUITE : TEST_ITEM_TYPES.STEP,
+      codeRef,
     };
     const testItemObj = this.client.startTestItem(startTestItemObj, this.launchId, parentId);
     this.addRequestToPromisesQueue(testItemObj.promise, 'Failed to start test item.');
     const tempId = testItemObj.tempId;
 
     // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
-    if (descendant.mode === TASK_STATE.skip) {
+    if (mode === TASK_MODE.skip || mode === TASK_MODE.todo) {
       const finishTestItemObj: FinishTestItemObjType = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
+        attributes: mode === TASK_MODE.todo ? [{ value: TASK_MODE.todo }] : [],
       };
       const { promise } = this.client.finishTestItem(tempId, finishTestItemObj);
       this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');
@@ -119,13 +151,13 @@ export class RPReporter implements Reporter {
       return;
     }
 
-    this.testItems.set(descendant.id, {
+    this.testItems.set(id, {
       id: tempId,
     });
 
     if (isSuite) {
       for (const innerDescendant of descendant.tasks) {
-        this.startDescendants(innerDescendant, tempId);
+        this.startDescendants(innerDescendant, codeRef, tempId);
       }
     }
   }
@@ -141,7 +173,7 @@ export class RPReporter implements Reporter {
 
     for (const [id, taskResult] of packsReversed) {
       const testItemId = this.testItems.get(id)?.id;
-      if (!testItemId) {
+      if (!testItemId || !FINISHED_STATES.includes(taskResult?.state)) {
         continue;
       }
 
@@ -165,17 +197,17 @@ export class RPReporter implements Reporter {
 
   getFinishTestItemObj(taskResult: TaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
-      status: STATUSES.PASSED,
+      status: STATUSES.FAILED,
     };
 
     switch (taskResult.state) {
-      case TASK_STATE.pass:
-      case TASK_STATE.fail:
+      case TASK_STATUS.pass:
+      case TASK_STATUS.fail:
         finishTestItemObj.status =
-          taskResult.state === TASK_STATE.fail ? STATUSES.FAILED : STATUSES.PASSED;
+          taskResult.state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
         finishTestItemObj.endTime = taskResult.startTime + taskResult.duration;
         break;
-      case TASK_STATE.skip:
+      case TASK_MODE.skip:
         finishTestItemObj.status = STATUSES.SKIPPED;
         break;
       default:
