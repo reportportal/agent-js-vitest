@@ -16,7 +16,16 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
+import {
+  File,
+  Reporter,
+  Task,
+  TaskResult,
+  TaskResultPack,
+  UserConsoleLog,
+  Vitest,
+  TaskState,
+} from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -32,7 +41,15 @@ import {
   getCodeRef,
   getBasePath,
 } from './utils';
-import { LAUNCH_MODES, LOG_LEVELS, STATUSES, TEST_ITEM_TYPES, TASK_STATE } from './constants';
+import {
+  LAUNCH_MODES,
+  LOG_LEVELS,
+  STATUSES,
+  TEST_ITEM_TYPES,
+  TASK_MODE,
+  TASK_STATUS,
+  FINISHED_STATES,
+} from './constants';
 
 export interface TestItem {
   id: string;
@@ -122,11 +139,11 @@ export class RPReporter implements Reporter {
     const tempId = testItemObj.tempId;
 
     // Finish statically skipped test immediately as its result won't be derived to _onTaskUpdate_
-    if (mode === TASK_STATE.skip || mode === TASK_STATE.todo) {
+    if (mode === TASK_MODE.skip || mode === TASK_MODE.todo) {
       const finishTestItemObj: FinishTestItemObjType = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
-        attributes: mode === TASK_STATE.todo ? [{ value: TASK_STATE.todo }] : [],
+        attributes: mode === TASK_MODE.todo ? [{ value: TASK_MODE.todo }] : [],
       };
       const { promise } = this.client.finishTestItem(tempId, finishTestItemObj);
       this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');
@@ -156,7 +173,7 @@ export class RPReporter implements Reporter {
 
     for (const [id, taskResult] of packsReversed) {
       const testItemId = this.testItems.get(id)?.id;
-      if (!testItemId) {
+      if (!testItemId || !FINISHED_STATES.includes(taskResult?.state)) {
         continue;
       }
 
@@ -180,17 +197,17 @@ export class RPReporter implements Reporter {
 
   getFinishTestItemObj(taskResult: TaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
-      status: STATUSES.PASSED,
+      status: STATUSES.FAILED,
     };
 
     switch (taskResult.state) {
-      case TASK_STATE.pass:
-      case TASK_STATE.fail:
+      case TASK_STATUS.pass:
+      case TASK_STATUS.fail:
         finishTestItemObj.status =
-          taskResult.state === TASK_STATE.fail ? STATUSES.FAILED : STATUSES.PASSED;
+          taskResult.state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
         finishTestItemObj.endTime = taskResult.startTime + taskResult.duration;
         break;
-      case TASK_STATE.skip:
+      case TASK_MODE.skip:
         finishTestItemObj.status = STATUSES.SKIPPED;
         break;
       default:

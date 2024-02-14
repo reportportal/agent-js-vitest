@@ -17,4 +17,6 @@
 
 import { RPReporter } from './reporter';
 
+export { RPReporter };
+
 export default RPReporter;
