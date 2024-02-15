@@ -173,7 +173,7 @@ export class RPReporter implements Reporter {
 
       const finishTestItemObj = this.getFinishTestItemObj(taskResult);
 
-      if (taskResult.errors?.length) {
+      if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
@@ -192,23 +192,29 @@ export class RPReporter implements Reporter {
     }
   }
 
-  getFinishTestItemObj(taskResult: TaskResult): FinishTestItemObjType {
+  getFinishTestItemObj(taskResult?: TaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
+      endTime: this.client.helpers.now(),
     };
 
-    switch (taskResult.state) {
-      case TASK_STATUS.pass:
-      case TASK_STATUS.fail:
-        finishTestItemObj.status =
-          taskResult.state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
-        finishTestItemObj.endTime = taskResult.startTime + taskResult.duration;
-        break;
-      case TASK_MODE.skip:
-        finishTestItemObj.status = STATUSES.SKIPPED;
-        break;
-      default:
-        break;
+    if (taskResult) {
+      const { state, startTime, duration } = taskResult;
+
+      switch (state) {
+        case TASK_STATUS.pass:
+        case TASK_STATUS.fail:
+          finishTestItemObj.status = state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
+          if (startTime && duration) {
+            finishTestItemObj.endTime = startTime + duration;
+          }
+          break;
+        case TASK_MODE.skip:
+          finishTestItemObj.status = STATUSES.SKIPPED;
+          break;
+        default:
+          break;
+      }
     }
 
     return finishTestItemObj;
