@@ -17,7 +17,7 @@ on:
   push:
     branches:
       - develop
-      - '!master'
+      - '!main'
     paths-ignore:
       - README.md
       - CHANGELOG.md
