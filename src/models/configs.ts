@@ -15,7 +15,7 @@
  *
  */
 
-import { AxiosRequestConfig } from 'axios';
+import { type AxiosRequestConfig } from 'axios';
 import { AgentOptions } from 'https';
 
 import { Attribute } from './common';

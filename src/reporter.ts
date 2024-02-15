@@ -16,6 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
+// eslint-disable-next-line import/named
 import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
 import {
   Attribute,
