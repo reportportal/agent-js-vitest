@@ -53,6 +53,7 @@ import {
 
 export interface TestItem {
   id: string;
+  finishSend?: boolean;
   // TODO: extract from task metadata
   status?: STATUSES;
   attributes?: Attribute[];
@@ -172,8 +173,9 @@ export class RPReporter implements Reporter {
     packsReversed.reverse();
 
     for (const [id, taskResult] of packsReversed) {
-      const testItemId = this.testItems.get(id)?.id;
-      if (!testItemId || !FINISHED_STATES.includes(taskResult?.state)) {
+      const testItem = this.testItems.get(id);
+      const { id: testItemId, finishSend } = testItem || {};
+      if (!testItemId || finishSend || !FINISHED_STATES.includes(taskResult?.state)) {
         continue;
       }
 
@@ -191,7 +193,10 @@ export class RPReporter implements Reporter {
 
       const { promise } = this.client.finishTestItem(testItemId, finishTestItemObj);
       this.addRequestToPromisesQueue(promise, 'Failed to finish test item.');
-      this.testItems.delete(id);
+      this.testItems.set(id, {
+        ...testItem,
+        finishSend: true,
+      });
     }
   }
 
@@ -254,6 +259,7 @@ export class RPReporter implements Reporter {
     }
     await Promise.all(this.promises);
     this.launchId = null;
+    this.testItems.clear();
   }
 
   // onTestRemoved(trigger?: string) {
