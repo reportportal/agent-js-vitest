@@ -1,6 +1,6 @@
 {
   "name": "@reportportal/agent-js-vitest",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Agent to integrate Vitest with ReportPortal.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
