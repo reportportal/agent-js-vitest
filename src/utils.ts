@@ -59,3 +59,7 @@ export const getBasePath = (filePath: string, rootDir: string) =>
 
 export const getCodeRef = (basePath: string, itemTitle: string): string =>
   normalize([basePath, itemTitle].join('/'));
+
+export const isErrorLog = (message: string): boolean => {
+  return message.toLowerCase().includes('error');
+};

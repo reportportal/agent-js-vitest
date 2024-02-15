@@ -16,16 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import {
-  File,
-  Reporter,
-  Task,
-  TaskResult,
-  TaskResultPack,
-  UserConsoleLog,
-  Vitest,
-  TaskState,
-} from 'vitest';
+import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -40,6 +31,7 @@ import {
   promiseErrorHandler,
   getCodeRef,
   getBasePath,
+  isErrorLog,
 } from './utils';
 import {
   LAUNCH_MODES,
@@ -238,11 +230,20 @@ export class RPReporter implements Reporter {
 
   // Send test item/launch log
   onUserConsoleLog({ content, taskId, time, type }: UserConsoleLog) {
+    if (!content) {
+      return;
+    }
+
     const testItemId = this.testItems.get(taskId)?.id;
+    let level = LOG_LEVELS.INFO;
+
+    if (type === 'stderr') {
+      level = isErrorLog(content) ? LOG_LEVELS.ERROR : LOG_LEVELS.WARN;
+    }
 
     const logRq: LogRQ = {
       time: time,
-      level: type === 'stderr' ? LOG_LEVELS.ERROR : LOG_LEVELS.INFO,
+      level,
       message: content,
     };
     // Send log to launch in case of target test item id doesn't exist
