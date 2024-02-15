@@ -1,2 +1,2 @@
 ### Added
-- Full compatibility with ReportPortal API version 5.* (see [reportportal releases](https://github.com/reportportal/reportportal/releases))
+- Basic reporting for ReportPortal API version 5.* (see [ReportPortal releases](https://github.com/reportportal/reportportal/releases))

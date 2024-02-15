@@ -1,7 +1,7 @@
 # @reportportal/agent-js-vitest
 
-Agent to integrate Playwright with ReportPortal.
-* More about [Playwright](https://vitest.dev/)
+Agent to integrate Vitest with ReportPortal.
+* More about [Vitest](https://vitest.dev/)
 * More about [ReportPortal](http://reportportal.io/)
 
 ## Installation
@@ -54,7 +54,6 @@ The full list of available options presented below.
 | rerun                                       | Optional   | false     | Enable [rerun](https://reportportal.io/docs/dev-guides/RerunDevelopersGuide)                                                                                                                                                                                                                                                                                                             |
 | rerunOf                                     | Optional   | Not set   | UUID of launch you want to rerun. If not specified, ReportPortal will update the latest launch with the same name                                                                                                                                                                                                                                                                        |
 | mode                                        | Optional   | 'DEFAULT' | Results will be submitted to Launches page <br/> *'DEBUG'* - Results will be submitted to Debug page.                                                                                                                                                                                                                                                                                    |
-| skippedIssue                                | Optional   | true      | ReportPortal provides feature to mark skipped tests as not 'To Investigate'. <br/> Option could be equal boolean values: <br/> *true* - skipped tests considered as issues and will be marked as 'To Investigate' on ReportPortal. <br/> *false* - skipped tests will not be marked as 'To Investigate' on application.                                                                  |
 | debug                                       | Optional   | false     | This flag allows seeing the logs of the client-javascript. Useful for debugging.                                                                                                                                                                                                                                                                                                         |
 | launchId                                    | Optional   | Not set   | The _ID_ of an already existing launch. The launch must be in 'IN_PROGRESS' status while the tests are running. Please note that if this _ID_ is provided, the launch will not be finished at the end of the run and must be finished separately.                                                                                                                                        |                            
 | restClientConfig                            | Optional   | Not set   | The object with `agent` property for configure [http(s)](https://nodejs.org/api/https.html#https_https_request_url_options_callback) client, may contain other client options eg. [`timeout`](https://github.com/reportportal/client-javascript#timeout-30000ms-on-axios-requests). <br/> Visit [client-javascript](https://github.com/reportportal/client-javascript) for more details. |
@@ -78,11 +77,11 @@ The following options can be overridden using ENVIRONMENT variables:
 
 ## Reporting
 
-When organizing tests, specify titles for `test.describe` blocks, as this is necessary to build the correct structure of reports.
+When organizing tests, specify titles for `describe` blocks, as this is necessary to build the correct structure of reports.
 
 ### Logging
 
-You can use the following `console` native methods to report logs to tests:
+You can use the following `console` native methods to report logs to the tests:
 
 ```typescript
 console.log();
@@ -94,4 +93,4 @@ console.error();
 
 console's `log`, `info`,`dubug` reports as info log.
 
-console's `error`` reports as error log.
+console's `error`, `warn` reports as error log if message contains _error_ mention, otherwise as warn log.
