@@ -57,5 +57,11 @@
     "reports",
     "portal",
     "epam"
+  ],
+   "contributors": [
+    {
+      "name": "Ilya Hancharyk",
+      "email": "amsterget@gmail.com"
+    }
   ]
 }
