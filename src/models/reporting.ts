@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-import { Task, TaskMeta } from "vitest";
+import { Task, TaskMeta } from 'vitest';
 import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
@@ -65,7 +65,7 @@ export interface LogRQ {
 export interface RPTaskMeta extends TaskMeta {
   test: {
     logs: LogRQ[];
-  }
+  };
 }
 
 export interface ReportingApi {

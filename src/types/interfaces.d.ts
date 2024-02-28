@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-import { Task } from "vitest";
+import { Task } from 'vitest';
 
 declare namespace Interfaces {
   interface Attribute {

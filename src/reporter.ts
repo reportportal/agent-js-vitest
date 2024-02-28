@@ -175,9 +175,9 @@ export class RPReporter implements Reporter {
       }
 
       if (isRPTaskMeta(meta)) {
-        meta.test.logs.forEach(logRq => {
+        meta.test.logs.forEach((logRq) => {
           this.sendLog(testItemId, logRq);
-        })
+        });
       }
 
       const finishTestItemObj = this.getFinishTestItemObj(taskResult);
