@@ -14,6 +14,7 @@
  *  limitations under the License.
  *
  */
+import { Task } from "vitest";
 
 declare namespace Interfaces {
   interface Attribute {
@@ -37,5 +38,9 @@ declare namespace Interfaces {
 
   interface ObjUniversal {
     [name: string]: string;
+  }
+
+  interface ReportingApi {
+    attachment: (task: Task, data: Attachment) => void;
   }
 }

@@ -21,6 +21,8 @@ import {
   FinishTestItemObjType,
   LogRQ,
   Attachment,
+  RPTaskMeta,
+  ReportingApi,
 } from './reporting';
 import { ReportPortalConfig } from './configs';
 import { Attribute } from './common';
@@ -32,5 +34,7 @@ export {
   ReportPortalConfig,
   Attachment,
   Attribute,
+  RPTaskMeta,
+  ReportingApi,
   LogRQ,
 };

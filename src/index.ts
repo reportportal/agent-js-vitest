@@ -16,7 +16,8 @@
  */
 
 import { RPReporter } from './reporter';
+import { ReportingApi } from './reportingApi';
+import { LOG_LEVELS, STATUSES } from './constants';
 
-export { RPReporter };
-
+export { RPReporter, ReportingApi, LOG_LEVELS, STATUSES };
 export default RPReporter;

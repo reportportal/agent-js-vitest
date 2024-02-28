@@ -25,6 +25,7 @@ import {
   ReportPortalConfig,
   StartLaunchObjType,
   StartTestObjType,
+  RPTaskMeta,
 } from './models';
 import {
   getAgentInfo,
@@ -33,6 +34,7 @@ import {
   getCodeRef,
   getBasePath,
   isErrorLog,
+  isRPTaskMeta,
 } from './utils';
 import {
   LAUNCH_MODES,
@@ -165,11 +167,17 @@ export class RPReporter implements Reporter {
     const packsReversed = [...packs];
     packsReversed.reverse();
 
-    for (const [id, taskResult] of packsReversed) {
+    for (const [id, taskResult, meta] of packsReversed) {
       const testItem = this.testItems.get(id);
       const { id: testItemId, finishSend } = testItem || {};
       if (!testItemId || finishSend || !FINISHED_STATES.includes(taskResult?.state)) {
         continue;
+      }
+
+      if (isRPTaskMeta(meta)) {
+        meta.test.logs.forEach(logRq => {
+          this.sendLog(testItemId, logRq);
+        })
       }
 
       const finishTestItemObj = this.getFinishTestItemObj(taskResult);
