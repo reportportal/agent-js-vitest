@@ -25,6 +25,7 @@ import {
   ReportPortalConfig,
   StartLaunchObjType,
   StartTestObjType,
+  RPTaskMeta,
 } from './models';
 import {
   getAgentInfo,
