@@ -15,28 +15,6 @@
  *
  */
 
-import {
-  StartLaunchObjType,
-  StartTestObjType,
-  FinishTestItemObjType,
-  LogRQ,
-  Attachment,
-  RPTaskMeta,
-  ReportingApi,
-  GlobalReportingApi,
-} from './reporting';
-import { ReportPortalConfig } from './configs';
-import { Attribute } from './common';
-
-export {
-  StartLaunchObjType,
-  StartTestObjType,
-  FinishTestItemObjType,
-  ReportPortalConfig,
-  Attachment,
-  Attribute,
-  RPTaskMeta,
-  ReportingApi,
-  GlobalReportingApi,
-  LogRQ,
-};
+declare global {
+  export const ReportingApi: GlobalReportingApi;
+}

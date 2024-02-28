@@ -4,6 +4,17 @@
   "description": "Agent to integrate Vitest with ReportPortal.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "require": "./build/index.js"
+    },
+    "./setup": {
+      "import": "./build/setup.js",
+      "require": "./build/setup.js"
+    }
+  },
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf ./build",
