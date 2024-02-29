@@ -16,6 +16,7 @@
  */
 
 import { normalize, sep } from 'node:path';
+// eslint-disable-next-line import/named
 import { TaskMeta } from 'vitest';
 // @ts-ignore
 import { name as pjsonName, version as pjsonVersion } from '../package.json';

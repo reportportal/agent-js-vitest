@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named
 import { Task } from 'vitest';
 import * as Models from './models';
 import { isRPTaskMeta } from './utils';

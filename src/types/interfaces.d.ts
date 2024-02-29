@@ -14,6 +14,7 @@
  *  limitations under the License.
  *
  */
+// eslint-disable-next-line import/named
 import { Task } from 'vitest';
 
 declare namespace Interfaces {
