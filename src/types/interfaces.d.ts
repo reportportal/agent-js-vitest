@@ -42,6 +42,6 @@ declare namespace Interfaces {
   }
 
   interface ReportingApi {
-    attachment: (task: Task, data: Attachment) => void;
+    attachment: (task: Task, data: Attachment, description?: string) => void;
   }
 }

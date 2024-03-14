@@ -16,9 +16,9 @@ const injectRPTaskMeta = (task: Task) => {
   };
 };
 
-const attachment = (task: Task, data: Models.Attachment) => {
+const attachment = (task: Task, data: Models.Attachment, description?: string) => {
   injectRPTaskMeta(task);
-  (task.meta as Models.RPTaskMeta).test.logs.push({ file: data, time: Date.now() });
+  (task.meta as Models.RPTaskMeta).test.logs.push({ file: data, time: Date.now(), message: description || data.name });
 };
 
 export const ReportingApi: Models.ReportingApi = {

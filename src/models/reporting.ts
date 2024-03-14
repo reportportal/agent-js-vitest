@@ -70,5 +70,5 @@ export interface RPTaskMeta extends TaskMeta {
 }
 
 export interface ReportingApi {
-  attachment: (context: Task, data: Attachment) => void;
+  attachment: (context: Task, data: Attachment, description?: string) => void;
 }
