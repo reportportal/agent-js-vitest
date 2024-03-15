@@ -16,8 +16,7 @@
  */
 
 import { normalize, sep } from 'node:path';
-// eslint-disable-next-line import/named
-import { TaskMeta } from 'vitest';
+import * as vitest from 'vitest';
 // @ts-ignore
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
 import { Attribute, RPTaskMeta } from './models';
@@ -66,4 +65,4 @@ export const isErrorLog = (message: string): boolean => {
   return message.toLowerCase().includes('error');
 };
 
-export const isRPTaskMeta = (meta: TaskMeta | RPTaskMeta): meta is RPTaskMeta => 'test' in meta;
+export const isRPTaskMeta = (meta: vitest.TaskMeta | RPTaskMeta): meta is RPTaskMeta => 'rpMeta' in meta;

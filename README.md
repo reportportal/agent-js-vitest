@@ -94,3 +94,37 @@ console.error();
 console's `log`, `info`,`dubug` reports as info log.
 
 console's `error`, `warn` reports as error log if message contains _error_ mention, otherwise as warn log.
+
+### Reporting API
+
+This reporter provides Reporting API to use it directly in tests to send some additional data to the report.
+
+To start using the `ReportingApi` in tests, just import it from `'@reportportal/agent-js-vitest'`:
+```javascript
+import { ReportingApi } from '@reportportal/agent-js-vitest';
+```
+
+#### Reporting API methods
+
+The API provide methods for attaching data.<br/>
+
+##### attachment
+Send file to report portal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
+**required**: `task`, `data`<br/>
+**optional**: `description`<br/>
+Example:
+```javascript
+test('should contain logs with attachments',({ task }) => {
+  const fileName = 'test.jpg';
+  const fileContent = fs.readFileSync(path.resolve(__dirname, './attachments', fileName));
+
+  ReportingApi.attachment(task, {
+    name: fileName,
+    type: 'image/png',
+    content: fileContent.toString('base64'),
+  }, 'Description');
+
+  expect(true).toBe(true);
+});
+```

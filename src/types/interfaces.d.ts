@@ -14,8 +14,7 @@
  *  limitations under the License.
  *
  */
-// eslint-disable-next-line import/named
-import { Task } from 'vitest';
+import * as vitest from 'vitest';
 
 declare namespace Interfaces {
   interface Attribute {
@@ -42,6 +41,6 @@ declare namespace Interfaces {
   }
 
   interface ReportingApi {
-    attachment: (task: Task, data: Attachment, description?: string) => void;
+    attachment: (task: vitest.Task, data: Attachment, description?: string) => void;
   }
 }
