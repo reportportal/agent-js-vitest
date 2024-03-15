@@ -14,8 +14,7 @@
  *  limitations under the License.
  *
  */
-// eslint-disable-next-line import/named
-import { Task, TaskMeta } from 'vitest';
+import * as vitest from 'vitest';
 import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
@@ -72,5 +71,5 @@ export interface RPTaskMeta extends TaskMeta {
 }
 
 export interface ReportingApi {
-  attachment: (context: Task, data: Attachment, description?: string) => void;
+  attachment: (context: vitest.Task, data: Attachment, description?: string) => void;
 }
