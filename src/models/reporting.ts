@@ -14,7 +14,8 @@
  *  limitations under the License.
  *
  */
-import * as vitest from 'vitest';
+// eslint-disable-next-line import/named
+import { Task, TaskMeta } from 'vitest';
 import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
@@ -62,14 +63,14 @@ export interface LogRQ {
   file?: Attachment;
 }
 
-export interface RPTaskMeta extends vitest.TaskMeta {
+export interface RPTaskMeta extends TaskMeta {
   rpMeta: {
     test: {
       logs: LogRQ[];
-    }
-  }
+    };
+  };
 }
 
 export interface ReportingApi {
-  attachment: (context: vitest.Task, data: Attachment, description?: string) => void;
+  attachment: (context: Task, data: Attachment, description?: string) => void;
 }

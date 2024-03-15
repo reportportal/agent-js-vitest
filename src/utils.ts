@@ -65,4 +65,5 @@ export const isErrorLog = (message: string): boolean => {
   return message.toLowerCase().includes('error');
 };
 
-export const isRPTaskMeta = (meta: vitest.TaskMeta | RPTaskMeta): meta is RPTaskMeta => 'rpMeta' in meta;
+export const isRPTaskMeta = (meta: vitest.TaskMeta | RPTaskMeta): meta is RPTaskMeta =>
+  'rpMeta' in meta;

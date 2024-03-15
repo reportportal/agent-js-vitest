@@ -13,7 +13,7 @@ const injectRPTaskMeta = (task: vitest.Task) => {
       test: {
         logs: [],
       },
-    }
+    },
   };
 };
 
