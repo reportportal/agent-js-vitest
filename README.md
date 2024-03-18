@@ -109,10 +109,11 @@ import { ReportingApi } from '@reportportal/agent-js-vitest';
 The API provide methods for attaching data.<br/>
 
 ##### attachment
-Send file to report portal for the current test. Should be called inside of corresponding test.<br/>
+Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
 `ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
 **required**: `task`, `data`<br/>
 **optional**: `description`<br/>
+where `Attachment` type is `{name: string; type: string; content: string | Buffer;}`<br/>
 Example:
 ```javascript
 test('should contain logs with attachments',({ task }) => {
