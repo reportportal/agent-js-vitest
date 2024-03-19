@@ -45,6 +45,6 @@ declare namespace Interfaces {
   }
 
   interface GlobalReportingApi {
-    attachment: (data: Attachment) => void;
+    attachment: (data: Attachment, description?: string) => void;
   }
 }

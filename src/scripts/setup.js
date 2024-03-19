@@ -1,5 +1,5 @@
-import { afterEach, beforeEach } from "vitest";
-import { bindReportingApi } from "./reportingApi";
+import { afterEach, beforeEach } from 'vitest';
+import { bindReportingApi } from '../reportingApi';
 
 beforeEach(async (ctx) => {
   // @ts-ignore

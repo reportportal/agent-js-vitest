@@ -76,5 +76,5 @@ export interface ReportingApi {
 }
 
 export interface GlobalReportingApi {
-  attachment: (data: Attachment) => void;
+  attachment: (data: Attachment, description?: string) => void;
 }

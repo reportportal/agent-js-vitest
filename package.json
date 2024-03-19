@@ -4,15 +4,14 @@
   "description": "Agent to integrate Vitest with ReportPortal.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "type": "module",
   "exports": {
     ".": {
       "import": "./build/index.js",
       "require": "./build/index.js"
     },
     "./setup": {
-      "import": "./build/setup.js",
-      "require": "./build/setup.js"
+      "import": "./build/scripts/setup.js",
+      "require": "./build/scripts/setup.js"
     }
   },
   "scripts": {
@@ -20,6 +19,7 @@
     "clean": "rimraf ./build",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "npm run lint -- --fix",
+    "postbuild": "mkdir -p build && cp -R src/scripts build/",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
