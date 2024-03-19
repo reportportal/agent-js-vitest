@@ -30,7 +30,7 @@ export const ReportingApi: Models.ReportingApi = {
   attachment,
 };
 
-export const bindReportingApi = (task: Task): Models.GlobalReportingApi => ({
+export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi => ({
   attachment: (data: Models.Attachment, description?: string) =>
     attachment(task, data, description),
 });
