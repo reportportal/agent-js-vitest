@@ -36,6 +36,8 @@ npm install --save-dev @reportportal/agent-js-vitest
 
   export default defineConfig({
     test: {
+      //add setup file to be able to use ReportingApi via `this.ReportingApi` in your tests and to get test plan support
+      setupFiles: ["@reportportal/agent-js-vitest/setup"],
       reporters: ['default', new RPReporter(rpConfig)],
     },
   });
@@ -99,10 +101,39 @@ console's `error`, `warn` reports as error log if message contains _error_ menti
 
 This reporter provides Reporting API to use it directly in tests to send some additional data to the report.
 
-To start using the `ReportingApi` in tests, just import it from `'@reportportal/agent-js-vitest'`:
-```javascript
-import { ReportingApi } from '@reportportal/agent-js-vitest';
-```
+To start using the `ReportingApi` in tests, you can:
+- Add setup file in `vitest.config.ts` 
+  ```javascript
+    import { defineConfig } from 'vitest/config';
+  
+    export default defineConfig({
+      test: {
+        ...
+        setupFiles: ["@reportportal/agent-js-vitest/setup"],
+      },
+    });
+  ```
+  `ReportingApi` will be available in global variables and supports receiving `task` from the `setup` file. 
+  ```javascript
+      test('should contain logs with attachments',() => {
+        ...
+        ReportingApi.attachment({ name, type, content }, 'Description');
+        ...
+      });
+  ```
+
+- Import `ReportingApi` from `'@reportportal/agent-js-vitest'`:
+  ```javascript
+  import { ReportingApi } from '@reportportal/agent-js-vitest';
+  ```
+  In this case you are required to pass `task` as the first argument to the `ReportingApi` methods.
+  ```javascript
+      test('should contain logs with attachments',({ task }) => {
+        ...
+        ReportingApi.attachment(task, { name, type, content }, 'Description');
+        ...
+      });
+  ```
 
 #### Reporting API methods
 
