@@ -1,3 +1,5 @@
+### Added
+- ReportingApi with attachment support
 
 ## [5.0.0] - 2024-02-15
 ### Added

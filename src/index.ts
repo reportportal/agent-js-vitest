@@ -16,7 +16,7 @@
  */
 
 import { RPReporter } from './reporter';
+import { ReportingApi } from './reportingApi';
 
-export { RPReporter };
-
+export { RPReporter, ReportingApi };
 export default RPReporter;

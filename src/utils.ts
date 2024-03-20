@@ -16,9 +16,10 @@
  */
 
 import { normalize, sep } from 'node:path';
+import * as vitest from 'vitest';
 // @ts-ignore
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
-import { Attribute } from './models';
+import { Attribute, RPTaskMeta } from './models';
 
 export const isFalse = (value: string | boolean | undefined): boolean =>
   [false, 'false'].includes(value);
@@ -63,3 +64,6 @@ export const getCodeRef = (basePath: string, itemTitle: string): string =>
 export const isErrorLog = (message: string): boolean => {
   return message.toLowerCase().includes('error');
 };
+
+export const isRPTaskMeta = (meta: vitest.TaskMeta | RPTaskMeta): meta is RPTaskMeta =>
+  'rpMeta' in meta;
