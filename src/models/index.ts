@@ -23,6 +23,7 @@ import {
   Attachment,
   RPTaskMeta,
   ReportingApi,
+  GlobalReportingApi,
 } from './reporting';
 import { ReportPortalConfig } from './configs';
 import { Attribute } from './common';
@@ -36,5 +37,6 @@ export {
   Attribute,
   RPTaskMeta,
   ReportingApi,
+  GlobalReportingApi,
   LogRQ,
 };
