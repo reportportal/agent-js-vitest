@@ -36,7 +36,7 @@ npm install --save-dev @reportportal/agent-js-vitest
 
   export default defineConfig({
     test: {
-      //add setup file to be able to use ReportingApi via `this.ReportingApi` in your tests and to get test plan support
+      // add setup file to be able to use ReportingApi via `this.ReportingApi` in your tests
       setupFiles: ["@reportportal/agent-js-vitest/setup"],
       reporters: ['default', new RPReporter(rpConfig)],
     },
