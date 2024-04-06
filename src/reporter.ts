@@ -227,7 +227,9 @@ export class RPReporter implements Reporter {
 
       if (errors?.length && this.config.extendTestDescriptionWithLastError) {
         const { stack } = taskResult.errors[0];
-        finishTestItemObj.description = (finishTestItemObj.description || '').concat(`\n\`\`\`error\n${stack}\n\`\`\``);
+        finishTestItemObj.description = (finishTestItemObj.description || '').concat(
+          `\n\`\`\`error\n${stack}\n\`\`\``,
+        );
       }
     }
 
