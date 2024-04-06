@@ -70,6 +70,7 @@ export class RPReporter implements Reporter {
 
   constructor(config: ReportPortalConfig) {
     this.config = {
+      extendTestDescriptionWithLastError: true,
       ...config,
       launchId: process.env.RP_LAUNCH_ID || config.launchId,
     };
@@ -207,7 +208,7 @@ export class RPReporter implements Reporter {
     };
 
     if (taskResult) {
-      const { state, startTime, duration } = taskResult;
+      const { state, startTime, duration, errors } = taskResult;
 
       switch (state) {
         case TASK_STATUS.pass:
@@ -222,6 +223,11 @@ export class RPReporter implements Reporter {
           break;
         default:
           break;
+      }
+
+      if (errors?.length && this.config.extendTestDescriptionWithLastError) {
+        const { stack } = taskResult.errors[0];
+        finishTestItemObj.description = (finishTestItemObj.description || '').concat(`\n\`\`\`error\n${stack}\n\`\`\``);
       }
     }
 
