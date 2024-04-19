@@ -184,6 +184,13 @@ export class RPReporter implements Reporter {
 
       if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
+
+        if (this.config.extendTestDescriptionWithLastError) {
+          finishTestItemObj.description = (finishTestItemObj.description || '').concat(
+            `\n\`\`\`error\n${error.stack}\n\`\`\``,
+          );
+        }
+
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
           level: LOG_LEVELS.ERROR,
@@ -208,7 +215,7 @@ export class RPReporter implements Reporter {
     };
 
     if (taskResult) {
-      const { state, startTime, duration, errors } = taskResult;
+      const { state, startTime, duration } = taskResult;
 
       switch (state) {
         case TASK_STATUS.pass:
@@ -223,13 +230,6 @@ export class RPReporter implements Reporter {
           break;
         default:
           break;
-      }
-
-      if (errors?.length && this.config.extendTestDescriptionWithLastError) {
-        const { stack } = taskResult.errors[0];
-        finishTestItemObj.description = (finishTestItemObj.description || '').concat(
-          `\n\`\`\`error\n${stack}\n\`\`\``,
-        );
       }
     }
 
