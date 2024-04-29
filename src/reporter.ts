@@ -70,6 +70,7 @@ export class RPReporter implements Reporter {
 
   constructor(config: ReportPortalConfig) {
     this.config = {
+      extendTestDescriptionWithLastError: true,
       ...config,
       launchId: process.env.RP_LAUNCH_ID || config.launchId,
     };
@@ -183,6 +184,13 @@ export class RPReporter implements Reporter {
 
       if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
+
+        if (this.config.extendTestDescriptionWithLastError) {
+          finishTestItemObj.description = (finishTestItemObj.description || '').concat(
+            `\n\`\`\`error\n${error.stack}\n\`\`\``,
+          );
+        }
+
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
           level: LOG_LEVELS.ERROR,
