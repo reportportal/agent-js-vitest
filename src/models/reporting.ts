@@ -67,14 +67,17 @@ export interface RPTaskMeta extends TaskMeta {
   rpMeta: {
     test: {
       logs: LogRQ[];
+      attributes: Attribute[];
     };
   };
 }
 
 export interface ReportingApi {
   attachment: (context: Task, data: Attachment, description?: string) => void;
+  attributes: (context: Task, data: Attribute[]) => void;
 }
 
 export interface GlobalReportingApi {
   attachment: (data: Attachment, description?: string) => void;
+  attributes: (data: Attribute[]) => void;
 }

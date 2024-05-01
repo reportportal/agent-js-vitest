@@ -182,6 +182,10 @@ export class RPReporter implements Reporter {
 
       const finishTestItemObj = this.getFinishTestItemObj(taskResult);
 
+      if (isRPTaskMeta(meta)) {
+        finishTestItemObj.attributes = meta.rpMeta.test.attributes;
+      }
+
       if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
 
