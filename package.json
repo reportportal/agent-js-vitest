@@ -24,7 +24,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@reportportal/client-javascript": "^5.1.1"
+    "@reportportal/client-javascript": "^5.1.3"
   },
   "files": [
     "/build"
@@ -69,7 +69,7 @@
     "portal",
     "epam"
   ],
-   "contributors": [
+  "contributors": [
     {
       "name": "Ilya Hancharyk",
       "email": "amsterget@gmail.com"
