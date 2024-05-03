@@ -1,7 +1,7 @@
 
 ## [5.1.0] - 2024-05-03
 ### Added
-- ReportingApi with attachment support
+- `ReportingApi` with `attachment` method support.
 - `extendTestDescriptionWithLastError` option to the RP config to be able to toggle the last error log attaching to the test description.
 ### Changed
 - `@reportportal/client-javascript` bumped to version `5.1.3`.

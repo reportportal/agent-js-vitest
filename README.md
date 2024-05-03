@@ -114,7 +114,7 @@ To start using the `ReportingApi` in tests, you can:
       },
     });
   ```
-  `ReportingApi` will be available in global variables and supports receiving `task` from the `setup` file. 
+  `ReportingApi` will be available in global variables and supports receiving Vitest `task` from the `setup` file.  
   ```javascript
       test('should contain logs with attachments',() => {
         ...
@@ -123,11 +123,11 @@ To start using the `ReportingApi` in tests, you can:
       });
   ```
 
-- Import `ReportingApi` from `'@reportportal/agent-js-vitest'`:
+- Import `ReportingApi` directly from `'@reportportal/agent-js-vitest'`:
   ```javascript
   import { ReportingApi } from '@reportportal/agent-js-vitest';
   ```
-  In this case you are required to pass `task` as the first argument to the `ReportingApi` methods.
+  In this case you are required to pass Vitest `task` as the first argument to the `ReportingApi` methods.
   ```javascript
       test('should contain logs with attachments',({ task }) => {
         ...
@@ -138,9 +138,10 @@ To start using the `ReportingApi` in tests, you can:
 
 #### Reporting API methods
 
-The API provide methods for attaching data.<br/>
+The API provides methods for attaching data.<br/>
 
 ##### attachment
+
 Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
 `ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
 **required**: `task`, `data`<br/>
