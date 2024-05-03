@@ -1,3 +1,5 @@
+
+## [5.1.0] - 2024-05-03
 ### Added
 - ReportingApi with attachment support
 - `extendTestDescriptionWithLastError` option to the RP config to be able to toggle the last error log attaching to the test description.
