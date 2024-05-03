@@ -14,7 +14,8 @@
  *  limitations under the License.
  *
  */
-
+// eslint-disable-next-line import/named
+import { Task, TaskMeta } from 'vitest';
 import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
@@ -60,4 +61,20 @@ export interface LogRQ {
   message?: string;
   time?: number;
   file?: Attachment;
+}
+
+export interface RPTaskMeta extends TaskMeta {
+  rpMeta: {
+    test: {
+      logs: LogRQ[];
+    };
+  };
+}
+
+export interface ReportingApi {
+  attachment: (context: Task, data: Attachment, description?: string) => void;
+}
+
+export interface GlobalReportingApi {
+  attachment: (data: Attachment, description?: string) => void;
 }

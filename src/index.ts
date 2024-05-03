@@ -16,7 +16,12 @@
  */
 
 import { RPReporter } from './reporter';
+import { ReportingApi } from './reportingApi';
+import { GlobalReportingApi } from './models';
 
-export { RPReporter };
+declare global {
+  const ReportingApi: GlobalReportingApi;
+}
 
+export { RPReporter, ReportingApi };
 export default RPReporter;

@@ -4,16 +4,27 @@
   "description": "Agent to integrate Vitest with ReportPortal.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "require": "./build/index.js"
+    },
+    "./setup": {
+      "import": "./build/scripts/setup.js",
+      "require": "./build/scripts/setup.js"
+    }
+  },
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf ./build",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "npm run lint -- --fix",
+    "postbuild": "mkdir -p build && cp -R src/scripts build/",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@reportportal/client-javascript": "^5.1.1"
+    "@reportportal/client-javascript": "^5.1.3"
   },
   "files": [
     "/build"
@@ -57,5 +68,11 @@
     "reports",
     "portal",
     "epam"
+  ],
+  "contributors": [
+    {
+      "name": "Ilya Hancharyk",
+      "email": "amsterget@gmail.com"
+    }
   ]
 }

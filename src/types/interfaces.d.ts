@@ -14,6 +14,7 @@
  *  limitations under the License.
  *
  */
+import * as vitest from 'vitest';
 
 declare namespace Interfaces {
   interface Attribute {
@@ -37,5 +38,13 @@ declare namespace Interfaces {
 
   interface ObjUniversal {
     [name: string]: string;
+  }
+
+  interface ReportingApi {
+    attachment: (task: vitest.Task, data: Attachment, description?: string) => void;
+  }
+
+  interface GlobalReportingApi {
+    attachment: (data: Attachment, description?: string) => void;
   }
 }

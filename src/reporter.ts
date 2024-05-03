@@ -33,6 +33,7 @@ import {
   getCodeRef,
   getBasePath,
   isErrorLog,
+  isRPTaskMeta,
 } from './utils';
 import {
   LAUNCH_MODES,
@@ -69,6 +70,7 @@ export class RPReporter implements Reporter {
 
   constructor(config: ReportPortalConfig) {
     this.config = {
+      extendTestDescriptionWithLastError: true,
       ...config,
       launchId: process.env.RP_LAUNCH_ID || config.launchId,
     };
@@ -165,17 +167,30 @@ export class RPReporter implements Reporter {
     const packsReversed = [...packs];
     packsReversed.reverse();
 
-    for (const [id, taskResult] of packsReversed) {
+    for (const [id, taskResult, meta] of packsReversed) {
       const testItem = this.testItems.get(id);
       const { id: testItemId, finishSend } = testItem || {};
       if (!testItemId || finishSend || !FINISHED_STATES.includes(taskResult?.state)) {
         continue;
       }
 
+      if (isRPTaskMeta(meta)) {
+        meta.rpMeta.test.logs.forEach((logRq) => {
+          this.sendLog(testItemId, logRq);
+        });
+      }
+
       const finishTestItemObj = this.getFinishTestItemObj(taskResult);
 
       if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
+
+        if (this.config.extendTestDescriptionWithLastError) {
+          finishTestItemObj.description = (finishTestItemObj.description || '').concat(
+            `\n\`\`\`error\n${error.stack}\n\`\`\``,
+          );
+        }
+
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
           level: LOG_LEVELS.ERROR,

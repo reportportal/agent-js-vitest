@@ -48,4 +48,5 @@ export interface ReportPortalConfig extends ClientConfig {
 
   // agent specific options
   skippedIssue?: boolean;
+  extendTestDescriptionWithLastError?: boolean;
 }

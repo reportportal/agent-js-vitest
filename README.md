@@ -36,6 +36,8 @@ npm install --save-dev @reportportal/agent-js-vitest
 
   export default defineConfig({
     test: {
+      // add setup file to be able to use ReportingApi via `this.ReportingApi` in your tests
+      setupFiles: ["@reportportal/agent-js-vitest/setup"],
       reporters: ['default', new RPReporter(rpConfig)],
     },
   });
@@ -46,7 +48,7 @@ The full list of available options presented below.
 | Option                                      | Necessity  | Default   | Description                                                                                                                                                                                                                                                                                                                                                                              |
 |---------------------------------------------|------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | apiKey                                      | Required   |           | User's ReportPortal token from which you want to send requests. It can be found on the profile page of this user.                                                                                                                                                                                                                                                                        |
-| endpoint                                    | Required   |           | URL of your server. For example 'https://server:8080/api/v1'.                                                                                                                                                                                                                                                                                                                            |
+| endpoint                                    | Required   |           | URL of your server. For example 'https://server:8080/api/v2'.                                                                                                                                                                                                                                                                                                                            |
 | launch                                      | Required   |           | Name of launch at creation.                                                                                                                                                                                                                                                                                                                                                              |
 | project                                     | Required   |           | The name of the project in which the launches will be created.                                                                                                                                                                                                                                                                                                                           |
 | attributes                                  | Optional   | []        | Launch attributes.                                                                                                                                                                                                                                                                                                                                                                       |
@@ -59,6 +61,7 @@ The full list of available options presented below.
 | restClientConfig                            | Optional   | Not set   | The object with `agent` property for configure [http(s)](https://nodejs.org/api/https.html#https_https_request_url_options_callback) client, may contain other client options eg. [`timeout`](https://github.com/reportportal/client-javascript#timeout-30000ms-on-axios-requests). <br/> Visit [client-javascript](https://github.com/reportportal/client-javascript) for more details. |
 | launchUuidPrint                             | Optional   | false     | Whether to print the current launch UUID.                                                                                                                                                                                                                                                                                                                                                |
 | launchUuidPrintOutput                       | Optional   | 'STDOUT'  | Launch UUID printing output. Possible values: 'STDOUT', 'STDERR'. Works only if `launchUuidPrint` set to `true`.                                                                                                                                                                                                                                                                         |
+| extendTestDescriptionWithLastError          | Optional   | true      | If set to `true` the latest error log will be attached to the test case description. |
 
 The following options can be overridden using ENVIRONMENT variables:
 
@@ -94,3 +97,67 @@ console.error();
 console's `log`, `info`,`dubug` reports as info log.
 
 console's `error`, `warn` reports as error log if message contains _error_ mention, otherwise as warn log.
+
+### Reporting API
+
+This reporter provides Reporting API to use it directly in tests to send some additional data to the report.
+
+To start using the `ReportingApi` in tests, you can:
+- Add setup file in `vitest.config.ts` 
+  ```javascript
+    import { defineConfig } from 'vitest/config';
+  
+    export default defineConfig({
+      test: {
+        ...
+        setupFiles: ["@reportportal/agent-js-vitest/setup"],
+      },
+    });
+  ```
+  `ReportingApi` will be available in global variables and supports receiving `task` from the `setup` file. 
+  ```javascript
+      test('should contain logs with attachments',() => {
+        ...
+        ReportingApi.attachment({ name, type, content }, 'Description');
+        ...
+      });
+  ```
+
+- Import `ReportingApi` from `'@reportportal/agent-js-vitest'`:
+  ```javascript
+  import { ReportingApi } from '@reportportal/agent-js-vitest';
+  ```
+  In this case you are required to pass `task` as the first argument to the `ReportingApi` methods.
+  ```javascript
+      test('should contain logs with attachments',({ task }) => {
+        ...
+        ReportingApi.attachment(task, { name, type, content }, 'Description');
+        ...
+      });
+  ```
+
+#### Reporting API methods
+
+The API provide methods for attaching data.<br/>
+
+##### attachment
+Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
+**required**: `task`, `data`<br/>
+**optional**: `description`<br/>
+where `Attachment` type is `{name: string; type: string; content: string | Buffer;}`<br/>
+Example:
+```javascript
+test('should contain logs with attachments',({ task }) => {
+  const fileName = 'test.jpg';
+  const fileContent = fs.readFileSync(path.resolve(__dirname, './attachments', fileName));
+
+  ReportingApi.attachment(task, {
+    name: fileName,
+    type: 'image/png',
+    content: fileContent.toString('base64'),
+  }, 'Description');
+
+  expect(true).toBe(true);
+});
+```
