@@ -38,15 +38,22 @@ const testCaseId = (task: vitest.Task, data: string) => {
   (task.meta as Models.RPTaskMeta).rpMeta.test.testCaseId = data;
 };
 
+const description = (task: vitest.Task, data: string) => {
+  injectRPTaskMeta(task);
+  const rpMeta = (task.meta as Models.RPTaskMeta).rpMeta;
+  rpMeta.test.description = (rpMeta.test.description || '').concat(`\n${data}`);
+};
+
 export const ReportingApi: Models.ReportingApi = {
   attachment,
   attributes,
   testCaseId,
+  description,
 };
 
 export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi => ({
-  attachment: (data: Models.Attachment, description?: string) =>
-    attachment(task, data, description),
+  attachment: (data: Models.Attachment, message?: string) => attachment(task, data, message),
   attributes: (data: Models.Attribute[]) => attributes(task, data),
   testCaseId: (data: string) => testCaseId(task, data),
+  description: (data: string) => testCaseId(task, data),
 });

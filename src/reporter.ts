@@ -174,17 +174,15 @@ export class RPReporter implements Reporter {
         continue;
       }
 
+      const finishTestItemObj = this.getFinishTestItemObj(taskResult);
+
       if (isRPTaskMeta(meta)) {
         meta.rpMeta.test.logs.forEach((logRq) => {
           this.sendLog(testItemId, logRq);
         });
-      }
-
-      const finishTestItemObj = this.getFinishTestItemObj(taskResult);
-
-      if (isRPTaskMeta(meta)) {
         finishTestItemObj.attributes = meta.rpMeta.test.attributes;
-        finishTestItemObj.testCaseId = meta.rpMeta.test.testCaseId || undefined;
+        finishTestItemObj.testCaseId = meta.rpMeta.test.testCaseId;
+        finishTestItemObj.description = meta.rpMeta.test.description;
       }
 
       if (taskResult?.errors?.length) {
