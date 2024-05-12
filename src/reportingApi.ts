@@ -33,13 +33,20 @@ const attributes = (task: vitest.Task, data: Models.Attribute[]) => {
   rpMeta.test.attributes = [...rpMeta.test.attributes, ...data];
 };
 
+const testCaseId = (task: vitest.Task, data: string) => {
+  injectRPTaskMeta(task);
+  (task.meta as Models.RPTaskMeta).rpMeta.test.testCaseId = data;
+};
+
 export const ReportingApi: Models.ReportingApi = {
   attachment,
   attributes,
+  testCaseId,
 };
 
 export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi => ({
   attachment: (data: Models.Attachment, description?: string) =>
     attachment(task, data, description),
   attributes: (data: Models.Attribute[]) => attributes(task, data),
+  testCaseId: (data: string) => testCaseId(task, data),
 });

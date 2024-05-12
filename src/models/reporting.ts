@@ -68,6 +68,7 @@ export interface RPTaskMeta extends TaskMeta {
     test: {
       logs: LogRQ[];
       attributes: Attribute[];
+      testCaseId?: string;
     };
   };
 }
@@ -75,9 +76,11 @@ export interface RPTaskMeta extends TaskMeta {
 export interface ReportingApi {
   attachment: (context: Task, data: Attachment, description?: string) => void;
   attributes: (context: Task, data: Attribute[]) => void;
+  testCaseId: (context: Task, data: string) => void;
 }
 
 export interface GlobalReportingApi {
   attachment: (data: Attachment, description?: string) => void;
   attributes: (data: Attribute[]) => void;
+  testCaseId: (data: string) => void;
 }

@@ -184,6 +184,7 @@ export class RPReporter implements Reporter {
 
       if (isRPTaskMeta(meta)) {
         finishTestItemObj.attributes = meta.rpMeta.test.attributes;
+        finishTestItemObj.testCaseId = meta.rpMeta.test.testCaseId || undefined;
       }
 
       if (taskResult?.errors?.length) {
