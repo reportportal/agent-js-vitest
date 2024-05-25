@@ -41,7 +41,11 @@ const testCaseId = (task: vitest.Task, data: string) => {
 const description = (task: vitest.Task, data: string) => {
   injectRPTaskMeta(task);
   const rpMeta = (task.meta as Models.RPTaskMeta).rpMeta;
-  rpMeta.test.description = (rpMeta.test.description || '').concat(`\n${data}`);
+  if (rpMeta.test.description) {
+    rpMeta.test.description = `${rpMeta.test.description}\n${data}`;
+  } else {
+    rpMeta.test.description = data;
+  }
 };
 
 export const ReportingApi: Models.ReportingApi = {
