@@ -59,5 +59,5 @@ export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi =
   attachment: (data: Models.Attachment, message?: string) => attachment(task, data, message),
   attributes: (data: Models.Attribute[]) => attributes(task, data),
   testCaseId: (data: string) => testCaseId(task, data),
-  description: (data: string) => testCaseId(task, data),
+  description: (data: string) => description(task, data),
 });
