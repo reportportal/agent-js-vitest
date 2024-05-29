@@ -1,10 +1,13 @@
 import { ReportingApi } from '../reportingApi';
+import * as vitest from 'vitest';
+import { getTask } from './mocks/data';
+import { RPTaskMeta } from '../models';
 
 describe('test attributes reporting', () => {
-  let task: any;
+  let task: vitest.Task;
 
   beforeEach(() => {
-    task = { meta: {} };
+    task = getTask();
   });
 
   test('should add attributes to task meta', () => {
@@ -14,12 +17,12 @@ describe('test attributes reporting', () => {
     ];
     ReportingApi.attributes(task, data);
 
-    expect(task.meta.rpMeta.test.attributes).toEqual(data);
+    expect((task.meta as RPTaskMeta).rpMeta.test.attributes).toEqual(data);
   });
 
   test('should append attributes to existing attributes in task meta', () => {
     const existingAttributes = [{ key: 'existingKey', value: 'existingValue' }];
-    task.meta = {
+    const rpMeta: RPTaskMeta = {
       rpMeta: {
         test: {
           logs: [],
@@ -27,9 +30,13 @@ describe('test attributes reporting', () => {
         },
       },
     };
+    task.meta = rpMeta;
     const newAttributes = [{ key: 'newKey', value: 'newValue' }];
     ReportingApi.attributes(task, newAttributes);
 
-    expect(task.meta.rpMeta.test.attributes).toEqual([...existingAttributes, ...newAttributes]);
+    expect((task.meta as RPTaskMeta).rpMeta.test.attributes).toEqual([
+      ...existingAttributes,
+      ...newAttributes,
+    ]);
   });
 });
