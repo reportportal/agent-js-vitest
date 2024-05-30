@@ -162,3 +162,47 @@ test('should contain logs with attachments',({ task }) => {
   expect(true).toBe(true);
 });
 ```
+
+##### testCaseId
+Add testCaseId to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.testCaseId(task: vitest.Task, data: string);`<br/>
+**required**: `task`, `data`<br/>
+Example:
+```javascript
+test('should contain testCaseId',({ task }) => {
+  ReportingApi.testCaseId(task, 'C123456');
+
+  expect(true).toBe(true);
+});
+```
+
+##### description
+Add description to ReportPortal for the current test. In case the user call the method more than one time, the existing description will be extended. Should be called inside of corresponding test.<br/>
+`ReportingApi.description(task: vitest.Task, data: string);`<br/>
+**required**: `task`, `data`<br/>
+Example:
+```javascript
+test('should contain description',({ task }) => {
+  ReportingApi.description(task, 'Test Description');
+
+  expect(true).toBe(true);
+});
+```
+
+##### attributes
+Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.attributes(task: vitest.Task, data: Attribute[]);`<br/>
+**required**: `task`, `data`<br/>
+where `Attribute` type is `{ value: string; key?: string; system?: boolean; }`<br/>
+Example:
+```javascript
+test('should contain attributes',({ task }) => {
+  ReportingApi.attributes(task,
+    [
+      { key: 'attrKey1', value: 'attrValue1'},
+      { value: 'attrValue2'}
+    ]);
+
+  expect(true).toBe(true);
+});
+```

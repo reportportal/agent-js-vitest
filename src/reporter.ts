@@ -174,13 +174,15 @@ export class RPReporter implements Reporter {
         continue;
       }
 
+      const finishTestItemObj = this.getFinishTestItemObj(taskResult);
+
       if (isRPTaskMeta(meta)) {
-        meta.rpMeta.test.logs.forEach((logRq) => {
+        const { logs, attributes, testCaseId, description } = meta.rpMeta.test;
+        logs.forEach((logRq) => {
           this.sendLog(testItemId, logRq);
         });
+        Object.assign(finishTestItemObj, { attributes, testCaseId, description });
       }
-
-      const finishTestItemObj = this.getFinishTestItemObj(taskResult);
 
       if (taskResult?.errors?.length) {
         const error = taskResult.errors[0];
