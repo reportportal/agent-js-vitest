@@ -1,3 +1,9 @@
+### Added
+- Test case id, attributes and description providing via Reporting API.
+### Changed
+- `@reportportal/client-javascript` bumped to version `5.1.4`, new `launchUuidPrintOutput` types introduced: 'FILE', 'ENVIRONMENT'.
+### Security
+- Updated versions of vulnerable packages (braces).
 
 ## [5.1.0] - 2024-05-03
 ### Added
