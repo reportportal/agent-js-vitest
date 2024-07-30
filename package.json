@@ -24,7 +24,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@reportportal/client-javascript": "^5.1.4"
+    "@reportportal/client-javascript": "~5.1.4"
   },
   "files": [
     "/build"
