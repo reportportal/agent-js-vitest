@@ -1,11 +1,14 @@
+import * as vitest from 'vitest';
+import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
-import { RPClientMock } from './mocks/RPClientMock';
-import * as vitest from 'vitest';
+import { RPClientMock, mockedDate } from './mocks/RPClientMock';
 import { RPTaskMeta } from '../models';
 import { STATUSES, TASK_STATUS } from '../constants';
 
 describe('onTaskUpdate', () => {
+  jest.spyOn(clientHelpers, 'now').mockReturnValue(mockedDate);
+
   let reporter: RPReporter;
   const testTaskId = 'testTaskId';
   const testItemId = 'testId';
@@ -44,7 +47,7 @@ describe('onTaskUpdate', () => {
         attributes,
         description,
         testCaseId,
-        endTime: reporter.client.helpers.now(),
+        endTime: '2024-09-23T12:20:59.392987Z',
       };
 
       reporter.onTaskUpdate(packs);

@@ -16,6 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
+import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 // eslint-disable-next-line import/named
 import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
 import {
@@ -96,7 +97,7 @@ export class RPReporter implements Reporter {
 
     const startLaunchObj: StartLaunchObjType = {
       name: launch,
-      startTime: this.client.helpers.now(),
+      startTime: clientHelpers.now(),
       description,
       attributes:
         attributes && attributes.length ? attributes.concat(systemAttributes) : systemAttributes,
@@ -120,7 +121,7 @@ export class RPReporter implements Reporter {
 
   startDescendants(descendant: Task, basePath: string, parentId?: string) {
     const { name, id, type, mode } = descendant;
-    const startTime = this.client.helpers.now();
+    const startTime = clientHelpers.now();
     const isSuite = type === 'suite';
     const codeRef = getCodeRef(basePath, parentId ? name : '');
 
@@ -213,7 +214,7 @@ export class RPReporter implements Reporter {
   getFinishTestItemObj(taskResult?: TaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
-      endTime: this.client.helpers.now(),
+      endTime: clientHelpers.now(),
     };
 
     if (taskResult) {
@@ -244,7 +245,7 @@ export class RPReporter implements Reporter {
       testItemId,
       {
         level: LOG_LEVELS.INFO,
-        time: this.client.helpers.now(),
+        time: clientHelpers.now(),
         ...logRqWithoutFile,
       },
       file,
@@ -278,7 +279,7 @@ export class RPReporter implements Reporter {
   async onFinished() {
     if (!this.config.launchId) {
       const { promise } = this.client.finishLaunch(this.launchId, {
-        endTime: this.client.helpers.now(),
+        endTime: clientHelpers.now(),
       });
       this.addRequestToPromisesQueue(promise, 'Failed to finish launch.');
     }

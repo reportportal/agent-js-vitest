@@ -1,6 +1,6 @@
 import { ReportPortalConfig } from '../../models';
 
-const mockedDate = Date.now();
+export const mockedDate = '2024-09-23T12:20:59.392987Z';
 export class RPClientMock {
   private config: ReportPortalConfig;
 
@@ -29,10 +29,6 @@ export class RPClientMock {
   public sendLog = jest.fn().mockReturnValue({
     promise: Promise.resolve('ok'),
   });
-
-  public helpers = {
-    now: (): number => mockedDate,
-  };
 
   public checkConnect = jest.fn().mockReturnValue({
     promise: Promise.resolve('ok'),

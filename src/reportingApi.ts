@@ -1,4 +1,5 @@
 import * as vitest from 'vitest';
+import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import * as Models from './models';
 import { isRPTaskMeta } from './utils';
 
@@ -22,7 +23,7 @@ const attachment = (task: vitest.Task, data: Models.Attachment, description?: st
   injectRPTaskMeta(task);
   (task.meta as Models.RPTaskMeta).rpMeta.test.logs.push({
     file: data,
-    time: Date.now(),
+    time: clientHelpers.now(),
     message: description || data.name,
   });
 };
