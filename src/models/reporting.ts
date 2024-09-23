@@ -20,7 +20,7 @@ import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
 export interface StartLaunchObjType {
-  startTime?: number;
+  startTime?: string | number;
   attributes?: Array<Attribute>;
   description?: string;
   name?: string;
@@ -35,14 +35,14 @@ export interface StartTestObjType {
   type: TEST_ITEM_TYPES;
   attributes?: Array<Attribute>;
   description?: string;
-  startTime?: number;
+  startTime?: string | number;
   codeRef?: string;
   testCaseId?: string;
   retry?: boolean;
 }
 
 export interface FinishTestItemObjType {
-  endTime?: number;
+  endTime?: string | number;
   status?: string;
   attributes?: Attribute[];
   description?: string;
@@ -59,7 +59,7 @@ export interface Attachment {
 export interface LogRQ {
   level?: LOG_LEVELS;
   message?: string;
-  time?: number;
+  time?: string | number;
   file?: Attachment;
 }
 
@@ -67,14 +67,23 @@ export interface RPTaskMeta extends TaskMeta {
   rpMeta: {
     test: {
       logs: LogRQ[];
+      attributes: Attribute[];
+      testCaseId?: string;
+      description?: string;
     };
   };
 }
 
 export interface ReportingApi {
   attachment: (context: Task, data: Attachment, description?: string) => void;
+  attributes: (context: Task, data: Attribute[]) => void;
+  testCaseId: (context: Task, data: string) => void;
+  description: (context: Task, data: string) => void;
 }
 
 export interface GlobalReportingApi {
   attachment: (data: Attachment, description?: string) => void;
+  attributes: (data: Attribute[]) => void;
+  testCaseId: (data: string) => void;
+  description: (data: string) => void;
 }

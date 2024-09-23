@@ -18,8 +18,8 @@ npm install --save-dev @reportportal/agent-js-vitest
   import RPReporter from '@reportportal/agent-js-vitest'; // or import { RPReporter } from '@reportportal/agent-js-vitest';
 
   const rpConfig = {
-    apiKey: '00000000-0000-0000-0000-000000000000',
-    endpoint: 'https://your.reportportal.server/api/v2',
+    apiKey: '<API_KEY>',
+    endpoint: 'https://your.reportportal.server/api/v1',
     project: 'Your ReportPortal project name',
     launch: 'Your launch name',
     attributes: [
@@ -45,23 +45,24 @@ npm install --save-dev @reportportal/agent-js-vitest
 
 The full list of available options presented below.
 
-| Option                                      | Necessity  | Default   | Description                                                                                                                                                                                                                                                                                                                                                                              |
-|---------------------------------------------|------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| apiKey                                      | Required   |           | User's ReportPortal token from which you want to send requests. It can be found on the profile page of this user.                                                                                                                                                                                                                                                                        |
-| endpoint                                    | Required   |           | URL of your server. For example 'https://server:8080/api/v2'.                                                                                                                                                                                                                                                                                                                            |
-| launch                                      | Required   |           | Name of launch at creation.                                                                                                                                                                                                                                                                                                                                                              |
-| project                                     | Required   |           | The name of the project in which the launches will be created.                                                                                                                                                                                                                                                                                                                           |
-| attributes                                  | Optional   | []        | Launch attributes.                                                                                                                                                                                                                                                                                                                                                                       |
-| description                                 | Optional   | ''        | Launch description.                                                                                                                                                                                                                                                                                                                                                                      |
-| rerun                                       | Optional   | false     | Enable [rerun](https://reportportal.io/docs/dev-guides/RerunDevelopersGuide)                                                                                                                                                                                                                                                                                                             |
-| rerunOf                                     | Optional   | Not set   | UUID of launch you want to rerun. If not specified, ReportPortal will update the latest launch with the same name                                                                                                                                                                                                                                                                        |
-| mode                                        | Optional   | 'DEFAULT' | Results will be submitted to Launches page <br/> *'DEBUG'* - Results will be submitted to Debug page.                                                                                                                                                                                                                                                                                    |
-| debug                                       | Optional   | false     | This flag allows seeing the logs of the client-javascript. Useful for debugging.                                                                                                                                                                                                                                                                                                         |
-| launchId                                    | Optional   | Not set   | The _ID_ of an already existing launch. The launch must be in 'IN_PROGRESS' status while the tests are running. Please note that if this _ID_ is provided, the launch will not be finished at the end of the run and must be finished separately.                                                                                                                                        |                            
-| restClientConfig                            | Optional   | Not set   | The object with `agent` property for configure [http(s)](https://nodejs.org/api/https.html#https_https_request_url_options_callback) client, may contain other client options eg. [`timeout`](https://github.com/reportportal/client-javascript#timeout-30000ms-on-axios-requests). <br/> Visit [client-javascript](https://github.com/reportportal/client-javascript) for more details. |
-| launchUuidPrint                             | Optional   | false     | Whether to print the current launch UUID.                                                                                                                                                                                                                                                                                                                                                |
-| launchUuidPrintOutput                       | Optional   | 'STDOUT'  | Launch UUID printing output. Possible values: 'STDOUT', 'STDERR'. Works only if `launchUuidPrint` set to `true`.                                                                                                                                                                                                                                                                         |
-| extendTestDescriptionWithLastError          | Optional   | true      | If set to `true` the latest error log will be attached to the test case description. |
+| Option                             | Necessity | Default   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|------------------------------------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| apiKey                             | Required  |           | User's ReportPortal token from which you want to send requests. It can be found on the profile page of this user.                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| endpoint                           | Required  |           | URL of your server. For example 'https://server:8080/api/v1'.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| launch                             | Required  |           | Name of launch at creation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| project                            | Required  |           | The name of the project in which the launches will be created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| attributes                         | Optional  | []        | Launch attributes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| description                        | Optional  | ''        | Launch description.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| rerun                              | Optional  | false     | Enable [rerun](https://reportportal.io/docs/dev-guides/RerunDevelopersGuide)                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| rerunOf                            | Optional  | Not set   | UUID of launch you want to rerun. If not specified, ReportPortal will update the latest launch with the same name                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| mode                               | Optional  | 'DEFAULT' | Results will be submitted to Launches page <br/> *'DEBUG'* - Results will be submitted to Debug page.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| debug                              | Optional  | false     | This flag allows seeing the logs of the client-javascript. Useful for debugging.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| launchId                           | Optional  | Not set   | The _ID_ of an already existing launch. The launch must be in 'IN_PROGRESS' status while the tests are running. Please note that if this _ID_ is provided, the launch will not be finished at the end of the run and must be finished separately.                                                                                                                                                                                                                                                                                                |                            
+| restClientConfig                   | Optional  | Not set   | `axios` like http client [config](https://github.com/axios/axios#request-config). May contain `agent` property for configure [http(s)](https://nodejs.org/api/https.html#https_https_request_url_options_callback) client, and other client options e.g. `proxy`, [`timeout`](https://github.com/reportportal/client-javascript#timeout-30000ms-on-axios-requests). For debugging and displaying logs the `debug: true` option can be used. <br/> Visit [client-javascript](https://github.com/reportportal/client-javascript) for more details. |
+| headers                            | Optional  | {}        | The object with custom headers for internal http client.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| launchUuidPrint                    | Optional  | false     | Whether to print the current launch UUID.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| launchUuidPrintOutput              | Optional  | 'STDOUT'  | Launch UUID printing output. Possible values: 'STDOUT', 'STDERR', 'FILE', 'ENVIRONMENT'. Works only if `launchUuidPrint` set to `true`. File format: `rp-launch-uuid-${launch_uuid}.tmp`. Env variable: `RP_LAUNCH_UUID`, note that the env variable is only available in the reporter process (it cannot be obtained from tests).                                                                                                                                                                                                               |
+| extendTestDescriptionWithLastError | Optional  | true      | If set to `true` the latest error log will be attached to the test case description.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 The following options can be overridden using ENVIRONMENT variables:
 
@@ -77,6 +78,11 @@ The following options can be overridden using ENVIRONMENT variables:
   }
 }
 ```
+
+## Asynchronous API
+
+The client supports an asynchronous reporting (via the ReportPortal asynchronous API).
+If you want the client to report through the asynchronous API, change `v1` to `v2` in the `endpoint` address.
 
 ## Reporting
 
@@ -114,7 +120,7 @@ To start using the `ReportingApi` in tests, you can:
       },
     });
   ```
-  `ReportingApi` will be available in global variables and supports receiving `task` from the `setup` file. 
+  `ReportingApi` will be available in global variables and supports receiving Vitest `task` from the `setup` file.  
   ```javascript
       test('should contain logs with attachments',() => {
         ...
@@ -123,11 +129,11 @@ To start using the `ReportingApi` in tests, you can:
       });
   ```
 
-- Import `ReportingApi` from `'@reportportal/agent-js-vitest'`:
+- Import `ReportingApi` directly from `'@reportportal/agent-js-vitest'`:
   ```javascript
   import { ReportingApi } from '@reportportal/agent-js-vitest';
   ```
-  In this case you are required to pass `task` as the first argument to the `ReportingApi` methods.
+  In this case you are required to pass Vitest `task` as the first argument to the `ReportingApi` methods.
   ```javascript
       test('should contain logs with attachments',({ task }) => {
         ...
@@ -138,9 +144,10 @@ To start using the `ReportingApi` in tests, you can:
 
 #### Reporting API methods
 
-The API provide methods for attaching data.<br/>
+The API provides methods for attaching data.<br/>
 
 ##### attachment
+
 Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
 `ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
 **required**: `task`, `data`<br/>
@@ -157,6 +164,50 @@ test('should contain logs with attachments',({ task }) => {
     type: 'image/png',
     content: fileContent.toString('base64'),
   }, 'Description');
+
+  expect(true).toBe(true);
+});
+```
+
+##### testCaseId
+Add testCaseId to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.testCaseId(task: vitest.Task, data: string);`<br/>
+**required**: `task`, `data`<br/>
+Example:
+```javascript
+test('should contain testCaseId',({ task }) => {
+  ReportingApi.testCaseId(task, 'C123456');
+
+  expect(true).toBe(true);
+});
+```
+
+##### description
+Add description to ReportPortal for the current test. In case the user call the method more than one time, the existing description will be extended. Should be called inside of corresponding test.<br/>
+`ReportingApi.description(task: vitest.Task, data: string);`<br/>
+**required**: `task`, `data`<br/>
+Example:
+```javascript
+test('should contain description',({ task }) => {
+  ReportingApi.description(task, 'Test Description');
+
+  expect(true).toBe(true);
+});
+```
+
+##### attributes
+Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
+`ReportingApi.attributes(task: vitest.Task, data: Attribute[]);`<br/>
+**required**: `task`, `data`<br/>
+where `Attribute` type is `{ value: string; key?: string; system?: boolean; }`<br/>
+Example:
+```javascript
+test('should contain attributes',({ task }) => {
+  ReportingApi.attributes(task,
+    [
+      { key: 'attrKey1', value: 'attrValue1'},
+      { value: 'attrValue2'}
+    ]);
 
   expect(true).toBe(true);
 });
