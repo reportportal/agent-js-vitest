@@ -2,7 +2,7 @@
 - Test case id, attributes and description providing via [Reporting API](./README.md#reporting-api-methods).
 ### Changed
 - The agent now supports reporting the time for launches, test items and logs with microsecond precision in the ISO string format.
-  For logs, microsecond precision is available on the UI from ReportPortal version 24.2.
+For logs, microsecond precision is available on the UI from ReportPortal version 24.2.
 - `@reportportal/client-javascript` bumped to version `5.3.0`, new `launchUuidPrintOutput` types introduced: 'FILE', 'ENVIRONMENT'.
 ### Security
 - Updated versions of vulnerable packages (braces).
