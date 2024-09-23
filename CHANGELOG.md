@@ -1,3 +1,5 @@
+
+## [5.1.1] - 2024-09-23
 ### Added
 - Test case id, attributes and description providing via [Reporting API](./README.md#reporting-api-methods).
 ### Changed
