@@ -17,4 +17,5 @@
 
 declare module '@reportportal/client-javascript/lib/helpers' {
   export function now(): string;
+  export function formatMicrosecondsToISOString(microseconds: number): string;
 }

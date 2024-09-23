@@ -225,7 +225,11 @@ export class RPReporter implements Reporter {
         case TASK_STATUS.fail:
           finishTestItemObj.status = state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
           if (startTime && duration) {
-            finishTestItemObj.endTime = startTime + duration;
+            // duration can be a floating number with more than 3 digits after dot
+            const fixedDurationInMs = Number(duration.toFixed(3));
+            finishTestItemObj.endTime = clientHelpers.formatMicrosecondsToISOString(
+              (startTime + fixedDurationInMs) * 1000,
+            );
           }
           break;
         case TASK_MODE.skip:
