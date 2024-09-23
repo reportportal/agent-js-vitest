@@ -18,8 +18,8 @@ npm install --save-dev @reportportal/agent-js-vitest
   import RPReporter from '@reportportal/agent-js-vitest'; // or import { RPReporter } from '@reportportal/agent-js-vitest';
 
   const rpConfig = {
-    apiKey: '00000000-0000-0000-0000-000000000000',
-    endpoint: 'https://your.reportportal.server/api/v2',
+    apiKey: '<API_KEY>',
+    endpoint: 'https://your.reportportal.server/api/v1',
     project: 'Your ReportPortal project name',
     launch: 'Your launch name',
     attributes: [
@@ -48,7 +48,7 @@ The full list of available options presented below.
 | Option                             | Necessity | Default   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 |------------------------------------|-----------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | apiKey                             | Required  |           | User's ReportPortal token from which you want to send requests. It can be found on the profile page of this user.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| endpoint                           | Required  |           | URL of your server. For example 'https://server:8080/api/v2'.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| endpoint                           | Required  |           | URL of your server. For example 'https://server:8080/api/v1'.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | launch                             | Required  |           | Name of launch at creation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | project                            | Required  |           | The name of the project in which the launches will be created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | attributes                         | Optional  | []        | Launch attributes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -78,6 +78,11 @@ The following options can be overridden using ENVIRONMENT variables:
   }
 }
 ```
+
+## Asynchronous API
+
+The client supports an asynchronous reporting (via the ReportPortal asynchronous API).
+If you want the client to report through the asynchronous API, change `v1` to `v2` in the `endpoint` address.
 
 ## Reporting
 

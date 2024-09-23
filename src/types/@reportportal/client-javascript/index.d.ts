@@ -15,26 +15,15 @@
  *
  */
 
-module.exports = {
-  roots: ['<rootDir>/src'],
-  transform: {
-    '.ts': ['ts-jest', {
-      diagnostics: {
-        pathRegex: '(/__tests__/.*?\\.(test|spec))\\.(ts|js)$',
-      },
-    }],
-  },
-  testEnvironment: 'node',
-  testRegex: '/__tests__/.*\\.(test|spec)?\\.(ts|js)$',
-  moduleFileExtensions: ['ts', 'js'],
-  collectCoverageFrom: ['src/**/*.ts'],
-  coveragePathIgnorePatterns: ['/__tests__/', 'index.ts', 'src/types'],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
-};
+declare module '@reportportal/client-javascript' {
+  export default class {
+    constructor(config: any, agentInfo?: any);
+
+    public startLaunch(launchObj: any): any;
+    public finishLaunch(launchId: string, launchObj: any): any;
+    public startTestItem(itemObj: any, launchId: string, parentId?: string): any;
+    public finishTestItem(itemId: string, itemObj: any): any;
+    public sendLog(itemId: string, itemObj: any, fileObj?: any): any;
+    public checkConnect(): any;
+  }
+}

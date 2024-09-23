@@ -2,6 +2,15 @@
   "name": "@reportportal/agent-js-vitest",
   "version": "5.1.0",
   "description": "Agent to integrate Vitest with ReportPortal.",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf ./build",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "npm run lint -- --fix",
+    "postbuild": "mkdir -p build && cp -R src/scripts build/",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "exports": {
@@ -14,21 +23,12 @@
       "require": "./build/scripts/setup.js"
     }
   },
-  "scripts": {
-    "build": "npm run clean && tsc",
-    "clean": "rimraf ./build",
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "npm run lint -- --fix",
-    "postbuild": "mkdir -p build && cp -R src/scripts build/",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
-  },
-  "dependencies": {
-    "@reportportal/client-javascript": "~5.1.4"
-  },
   "files": [
     "/build"
   ],
+  "dependencies": {
+    "@reportportal/client-javascript": "~5.3.0"
+  },
   "devDependencies": {
     "vitest": "^1.6.0",
     "@types/jest": "^29.5.12",
