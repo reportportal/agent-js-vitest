@@ -1,10 +1,10 @@
-import * as vitest from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
 import { RPClientMock, mockedDate } from './mocks/RPClientMock';
 import { RPTaskMeta } from '../models';
 import { STATUSES, TASK_STATUS } from '../constants';
+import * as vitest from 'vitest';
 
 describe('onTaskUpdate', () => {
   jest.spyOn(clientHelpers, 'now').mockReturnValue(mockedDate);
@@ -41,7 +41,7 @@ describe('onTaskUpdate', () => {
           },
         },
       };
-      const packs: vitest.TaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
+      const packs: vitest.RunnerTaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
       const finishTestItemRQ = {
         status: STATUSES.PASSED,
         attributes,

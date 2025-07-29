@@ -1,3 +1,6 @@
+### Updated
+- Updated Vitest to latest version `3.2.4`.
+- Verified compatibility with Vitest major versions 2.x, 3.x
 
 ## [5.1.1] - 2024-09-23
 ### Added

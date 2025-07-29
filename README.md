@@ -4,6 +4,12 @@ Agent to integrate Vitest with ReportPortal.
 * More about [Vitest](https://vitest.dev/)
 * More about [ReportPortal](http://reportportal.io/)
 
+## Supported Versions
+
+This agent supports Vitest versions:
+- **2.x** - Tested and compatible
+- **3.x** - Tested and compatible (recommended)
+
 ## Installation
 Install the agent in your project:
 ```cmd

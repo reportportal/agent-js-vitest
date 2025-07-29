@@ -18,7 +18,9 @@
 import RPClient from '@reportportal/client-javascript';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 // eslint-disable-next-line import/named
-import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
+import { RunnerTestFile, RunnerTask, RunnerTaskResult, RunnerTaskResultPack, UserConsoleLog } from 'vitest';
+import { Vitest } from "vitest/node";
+import { Reporter } from 'vitest/reporters';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -89,7 +91,7 @@ export class RPReporter implements Reporter {
 
   // Start launch
   onInit(vitest: Vitest): void {
-    this.rootDir = vitest.runner.root;
+    this.rootDir = vitest.config.root;
 
     const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
       this.config;
@@ -112,14 +114,14 @@ export class RPReporter implements Reporter {
   }
 
   // Start suites, tests
-  onCollected(files: File[] = []) {
+  onCollected(files: RunnerTestFile[] = []) {
     for (const file of files) {
       const basePath = getBasePath(file.filepath, this.rootDir);
       this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: Task, basePath: string, parentId?: string) {
+  startDescendants(descendant: RunnerTask, basePath: string, parentId?: string) {
     const { name, id, type, mode } = descendant;
     const startTime = clientHelpers.now();
     const isSuite = type === 'suite';
@@ -163,7 +165,7 @@ export class RPReporter implements Reporter {
   // TODO: start and finish retries synthetically?
   // https://github.com/vitest-dev/vitest/discussions/4729
   // Finish suites, tests
-  onTaskUpdate(packs: TaskResultPack[]) {
+  onTaskUpdate(packs: RunnerTaskResultPack[]) {
     // Reverse the result packs to finish descendants first
     const packsReversed = [...packs];
     packsReversed.reverse();
@@ -211,7 +213,7 @@ export class RPReporter implements Reporter {
     }
   }
 
-  getFinishTestItemObj(taskResult?: TaskResult): FinishTestItemObjType {
+  getFinishTestItemObj(taskResult?: RunnerTaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
       endTime: clientHelpers.now(),

@@ -4,7 +4,7 @@ import { getTask } from './mocks/data';
 import { RPTaskMeta } from '../models';
 
 describe('test description reporting', () => {
-  let task: vitest.Task;
+  let task: vitest.RunnerTask;
 
   beforeEach(() => {
     task = getTask();

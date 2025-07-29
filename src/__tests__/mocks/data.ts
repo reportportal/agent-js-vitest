@@ -1,6 +1,6 @@
 import * as vitest from 'vitest';
 
-export function getTask(): vitest.Task {
+export function getTask(): vitest.RunnerTask {
   return {
     id: 'id',
     name: 'task',
