@@ -18,8 +18,14 @@
 import RPClient from '@reportportal/client-javascript';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 // eslint-disable-next-line import/named
-import { RunnerTestFile, RunnerTask, RunnerTaskResult, RunnerTaskResultPack, UserConsoleLog } from 'vitest';
-import { Vitest } from "vitest/node";
+import {
+  RunnerTestFile,
+  RunnerTask,
+  RunnerTaskResult,
+  RunnerTaskResultPack,
+  UserConsoleLog,
+} from 'vitest';
+import { Vitest } from 'vitest/node';
 import { Reporter } from 'vitest/reporters';
 import {
   Attribute,

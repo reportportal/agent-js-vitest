@@ -41,7 +41,9 @@ describe('onTaskUpdate', () => {
           },
         },
       };
-      const packs: vitest.RunnerTaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
+      const packs: vitest.RunnerTaskResultPack[] = [
+        [testTaskId, { state: TASK_STATUS.pass }, taskMeta],
+      ];
       const finishTestItemRQ = {
         status: STATUSES.PASSED,
         attributes,

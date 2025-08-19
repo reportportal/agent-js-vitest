@@ -23,9 +23,9 @@ export function getTask(): vitest.RunnerTask {
       importDurations: {},
       get file(): vitest.RunnerTestFile {
         return this;
-      }
-    }
+      },
+    },
   };
-  
+
   return suite;
 }
