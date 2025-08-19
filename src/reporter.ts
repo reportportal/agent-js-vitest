@@ -17,15 +17,10 @@
 
 import RPClient from '@reportportal/client-javascript';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
+import * as vitest from 'vitest';
 // eslint-disable-next-line import/named
-import {
-  RunnerTestFile,
-  RunnerTask,
-  RunnerTaskResult,
-  RunnerTaskResultPack,
-  UserConsoleLog,
-} from 'vitest';
 import { Vitest } from 'vitest/node';
+// eslint-disable-next-line import/named
 import { Reporter } from 'vitest/reporters';
 import {
   Attribute,
@@ -96,8 +91,8 @@ export class RPReporter implements Reporter {
   }
 
   // Start launch
-  onInit(vitest: Vitest): void {
-    this.rootDir = vitest.config.root;
+  onInit(vitestInstance: Vitest): void {
+    this.rootDir = vitestInstance.config.root;
 
     const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
       this.config;
@@ -120,14 +115,14 @@ export class RPReporter implements Reporter {
   }
 
   // Start suites, tests
-  onCollected(files: RunnerTestFile[] = []) {
+  onCollected(files: vitest.RunnerTestFile[] = []) {
     for (const file of files) {
       const basePath = getBasePath(file.filepath, this.rootDir);
       this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: RunnerTask, basePath: string, parentId?: string) {
+  startDescendants(descendant: vitest.RunnerTask, basePath: string, parentId?: string) {
     const { name, id, type, mode } = descendant;
     const startTime = clientHelpers.now();
     const isSuite = type === 'suite';
@@ -171,7 +166,7 @@ export class RPReporter implements Reporter {
   // TODO: start and finish retries synthetically?
   // https://github.com/vitest-dev/vitest/discussions/4729
   // Finish suites, tests
-  onTaskUpdate(packs: RunnerTaskResultPack[]) {
+  onTaskUpdate(packs: vitest.RunnerTaskResultPack[]) {
     // Reverse the result packs to finish descendants first
     const packsReversed = [...packs];
     packsReversed.reverse();
@@ -219,7 +214,7 @@ export class RPReporter implements Reporter {
     }
   }
 
-  getFinishTestItemObj(taskResult?: RunnerTaskResult): FinishTestItemObjType {
+  getFinishTestItemObj(taskResult?: vitest.RunnerTaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
       endTime: clientHelpers.now(),
@@ -266,7 +261,7 @@ export class RPReporter implements Reporter {
   }
 
   // Send test item/launch log
-  onUserConsoleLog({ content, taskId, time, type }: UserConsoleLog) {
+  onUserConsoleLog({ content, taskId, time, type }: vitest.UserConsoleLog) {
     if (!content) {
       return;
     }
