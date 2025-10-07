@@ -1,5 +1,7 @@
 ### Added
 - Vitest 2.x and 3.x versions support.
+- `error.message` is now used when extending test description instead of `error.stack` to improve readability, thanks to @lcharlois-neotys.
+- `error.diff` is now added to failed item logs to improve failure analysis, thanks to @lcharlois-neotys.
 - Allow configuring the HTTP retry strategy via `restClientConfig.retry` and tune the [default policy](https://github.com/reportportal/client-javascript?tab=readme-ov-file#retry-configuration).
 ### Changed
 - Revert time format back to milliseconds (based on [#217](https://github.com/reportportal/client-javascript/issues/217#issuecomment-2659843471)). This is also fixing the issue with agents installation on ARM processors [#212](https://github.com/reportportal/agent-js-cypress/issues/212).
