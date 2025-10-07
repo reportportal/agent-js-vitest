@@ -1,5 +1,11 @@
 ### Added
-- Vitest 2 and 3 major versions support.
+- Vitest 2.x and 3.x versions support.
+- Allow configuring the HTTP retry strategy via `restClientConfig.retry` and tune the [default policy](https://github.com/reportportal/client-javascript?tab=readme-ov-file#retry-configuration).
+### Changed
+- Revert time format back to milliseconds (based on [#217](https://github.com/reportportal/client-javascript/issues/217#issuecomment-2659843471)). This is also fixing the issue with agents installation on ARM processors [#212](https://github.com/reportportal/agent-js-cypress/issues/212).
+- `@reportportal/client-javascript` bumped to version `5.4.2`.
+### Security
+- Updated versions of vulnerable packages (axios, form-data).
 
 ## [5.1.1] - 2024-09-23
 ### Added

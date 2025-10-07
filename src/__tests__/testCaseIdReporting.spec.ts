@@ -1,10 +1,10 @@
 import { ReportingApi } from '../reportingApi';
-import * as vitest from 'vitest';
+import type { RunnerTask } from 'vitest';
 import { getTask } from './mocks/data';
 import { RPTaskMeta } from '../models';
 
 describe('test case id reporting', () => {
-  let task: vitest.RunnerTask;
+  let task: RunnerTask;
 
   beforeEach(() => {
     task = getTask();

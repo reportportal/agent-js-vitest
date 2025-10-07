@@ -17,11 +17,15 @@
 
 import RPClient from '@reportportal/client-javascript';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
-import * as vitest from 'vitest';
-// eslint-disable-next-line import/named
-import { Vitest } from 'vitest/node';
-// eslint-disable-next-line import/named
-import { Reporter } from 'vitest/reporters';
+import type {
+  RunnerTestFile,
+  RunnerTask,
+  RunnerTaskResult,
+  RunnerTaskResultPack,
+  UserConsoleLog,
+} from 'vitest';
+import type { Vitest } from 'vitest/node';
+import type { Reporter } from 'vitest/reporters';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -115,14 +119,14 @@ export class RPReporter implements Reporter {
   }
 
   // Start suites, tests
-  onCollected(files: vitest.RunnerTestFile[] = []) {
+  onCollected(files: RunnerTestFile[] = []) {
     for (const file of files) {
       const basePath = getBasePath(file.filepath, this.rootDir);
       this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: vitest.RunnerTask, basePath: string, parentId?: string) {
+  startDescendants(descendant: RunnerTask, basePath: string, parentId?: string) {
     const { name, id, type, mode } = descendant;
     const startTime = clientHelpers.now();
     const isSuite = type === 'suite';
@@ -166,7 +170,7 @@ export class RPReporter implements Reporter {
   // TODO: start and finish retries synthetically?
   // https://github.com/vitest-dev/vitest/discussions/4729
   // Finish suites, tests
-  onTaskUpdate(packs: vitest.RunnerTaskResultPack[]) {
+  onTaskUpdate(packs: RunnerTaskResultPack[]) {
     // Reverse the result packs to finish descendants first
     const packsReversed = [...packs];
     packsReversed.reverse();
@@ -214,7 +218,7 @@ export class RPReporter implements Reporter {
     }
   }
 
-  getFinishTestItemObj(taskResult?: vitest.RunnerTaskResult): FinishTestItemObjType {
+  getFinishTestItemObj(taskResult?: RunnerTaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
       endTime: clientHelpers.now(),
@@ -227,12 +231,9 @@ export class RPReporter implements Reporter {
         case TASK_STATUS.pass:
         case TASK_STATUS.fail:
           finishTestItemObj.status = state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
-          if (startTime && duration) {
-            // duration can be a floating number with more than 3 digits after dot
-            const fixedDurationInMs = Number(duration.toFixed(3));
-            finishTestItemObj.endTime = clientHelpers.formatMicrosecondsToISOString(
-              (startTime + fixedDurationInMs) * 1000,
-            );
+          if (Number.isFinite(startTime) && Number.isFinite(duration)) {
+            // Ensure endTime stays in whole milliseconds.
+            finishTestItemObj.endTime = startTime + Math.round(duration);
           }
           break;
         case TASK_MODE.skip:
@@ -261,7 +262,7 @@ export class RPReporter implements Reporter {
   }
 
   // Send test item/launch log
-  onUserConsoleLog({ content, taskId, time, type }: vitest.UserConsoleLog) {
+  onUserConsoleLog({ content, taskId, time, type }: UserConsoleLog) {
     if (!content) {
       return;
     }
