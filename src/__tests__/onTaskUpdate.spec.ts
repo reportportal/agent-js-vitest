@@ -1,4 +1,4 @@
-import * as vitest from 'vitest';
+import type { RunnerTaskResultPack } from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
@@ -41,7 +41,7 @@ describe('onTaskUpdate', () => {
           },
         },
       };
-      const packs: vitest.TaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
+      const packs: RunnerTaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
       const finishTestItemRQ = {
         status: STATUSES.PASSED,
         attributes,

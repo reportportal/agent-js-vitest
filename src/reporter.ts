@@ -17,8 +17,15 @@
 
 import RPClient from '@reportportal/client-javascript';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
-// eslint-disable-next-line import/named
-import { File, Reporter, Task, TaskResult, TaskResultPack, UserConsoleLog, Vitest } from 'vitest';
+import type {
+  RunnerTestFile,
+  RunnerTask,
+  RunnerTaskResult,
+  RunnerTaskResultPack,
+  UserConsoleLog,
+} from 'vitest';
+import type { Vitest } from 'vitest/node';
+import type { Reporter } from 'vitest/reporters';
 import {
   Attribute,
   FinishTestItemObjType,
@@ -88,8 +95,8 @@ export class RPReporter implements Reporter {
   }
 
   // Start launch
-  onInit(vitest: Vitest): void {
-    this.rootDir = vitest.runner.root;
+  onInit(vitestInstance: Vitest): void {
+    this.rootDir = vitestInstance.config.root;
 
     const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
       this.config;
@@ -112,14 +119,14 @@ export class RPReporter implements Reporter {
   }
 
   // Start suites, tests
-  onCollected(files: File[] = []) {
+  onCollected(files: RunnerTestFile[] = []) {
     for (const file of files) {
       const basePath = getBasePath(file.filepath, this.rootDir);
       this.startDescendants(file, basePath);
     }
   }
 
-  startDescendants(descendant: Task, basePath: string, parentId?: string) {
+  startDescendants(descendant: RunnerTask, basePath: string, parentId?: string) {
     const { name, id, type, mode } = descendant;
     const startTime = clientHelpers.now();
     const isSuite = type === 'suite';
@@ -163,7 +170,7 @@ export class RPReporter implements Reporter {
   // TODO: start and finish retries synthetically?
   // https://github.com/vitest-dev/vitest/discussions/4729
   // Finish suites, tests
-  onTaskUpdate(packs: TaskResultPack[]) {
+  onTaskUpdate(packs: RunnerTaskResultPack[]) {
     // Reverse the result packs to finish descendants first
     const packsReversed = [...packs];
     packsReversed.reverse();
@@ -190,7 +197,7 @@ export class RPReporter implements Reporter {
 
         if (this.config.extendTestDescriptionWithLastError) {
           finishTestItemObj.description = (finishTestItemObj.description || '').concat(
-            `\n\`\`\`error\n${error.stack}\n\`\`\``,
+            `\n\`\`\`error\n${error.message}\n\`\`\``,
           );
         }
 
@@ -200,6 +207,15 @@ export class RPReporter implements Reporter {
           message: error.stack,
         };
         this.sendLog(testItemId, logRq);
+
+        if ('diff' in error) {
+          const logRqDiff: LogRQ = {
+            time: finishTestItemObj.endTime,
+            level: LOG_LEVELS.ERROR,
+            message: `\`\`\`diff\n${error.diff}\n\`\`\``,
+          };
+          this.sendLog(testItemId, logRqDiff);
+        }
       }
 
       const { promise } = this.client.finishTestItem(testItemId, finishTestItemObj);
@@ -211,7 +227,7 @@ export class RPReporter implements Reporter {
     }
   }
 
-  getFinishTestItemObj(taskResult?: TaskResult): FinishTestItemObjType {
+  getFinishTestItemObj(taskResult?: RunnerTaskResult): FinishTestItemObjType {
     const finishTestItemObj: FinishTestItemObjType = {
       status: STATUSES.FAILED,
       endTime: clientHelpers.now(),
@@ -224,12 +240,9 @@ export class RPReporter implements Reporter {
         case TASK_STATUS.pass:
         case TASK_STATUS.fail:
           finishTestItemObj.status = state === TASK_STATUS.fail ? STATUSES.FAILED : STATUSES.PASSED;
-          if (startTime && duration) {
-            // duration can be a floating number with more than 3 digits after dot
-            const fixedDurationInMs = Number(duration.toFixed(3));
-            finishTestItemObj.endTime = clientHelpers.formatMicrosecondsToISOString(
-              (startTime + fixedDurationInMs) * 1000,
-            );
+          if (Number.isFinite(startTime) && Number.isFinite(duration)) {
+            // Ensure endTime stays in whole milliseconds.
+            finishTestItemObj.endTime = startTime + Math.round(duration);
           }
           break;
         case TASK_MODE.skip:
