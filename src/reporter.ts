@@ -197,7 +197,7 @@ export class RPReporter implements Reporter {
 
         if (this.config.extendTestDescriptionWithLastError) {
           finishTestItemObj.description = (finishTestItemObj.description || '').concat(
-            `\n\`\`\`error\n${error.stack}\n\`\`\``,
+            `\n\`\`\`error\n${error.message}\n\`\`\``,
           );
         }
 
@@ -207,6 +207,15 @@ export class RPReporter implements Reporter {
           message: error.stack,
         };
         this.sendLog(testItemId, logRq);
+
+        if ('diff' in error) {
+          const logRqDiff: LogRQ = {
+            time: finishTestItemObj.endTime,
+            level: LOG_LEVELS.ERROR,
+            message: `\`\`\`diff\n${error.diff}\n\`\`\``,
+          };
+          this.sendLog(testItemId, logRqDiff);
+        }
       }
 
       const { promise } = this.client.finishTestItem(testItemId, finishTestItemObj);
