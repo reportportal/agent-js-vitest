@@ -15,7 +15,7 @@
  *
  */
 // eslint-disable-next-line import/named
-import { Task, TaskMeta } from 'vitest';
+import { RunnerTask, TaskMeta } from 'vitest';
 import { Attribute, Issue } from './common';
 import { TEST_ITEM_TYPES, LOG_LEVELS, LAUNCH_MODES } from '../constants';
 
@@ -75,10 +75,10 @@ export interface RPTaskMeta extends TaskMeta {
 }
 
 export interface ReportingApi {
-  attachment: (context: Task, data: Attachment, description?: string) => void;
-  attributes: (context: Task, data: Attribute[]) => void;
-  testCaseId: (context: Task, data: string) => void;
-  description: (context: Task, data: string) => void;
+  attachment: (context: RunnerTask, data: Attachment, description?: string) => void;
+  attributes: (context: RunnerTask, data: Attribute[]) => void;
+  testCaseId: (context: RunnerTask, data: string) => void;
+  description: (context: RunnerTask, data: string) => void;
 }
 
 export interface GlobalReportingApi {

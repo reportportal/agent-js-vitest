@@ -1,3 +1,5 @@
+### Added
+- Vitest 2 and 3 major versions support.
 
 ## [5.1.1] - 2024-09-23
 ### Added

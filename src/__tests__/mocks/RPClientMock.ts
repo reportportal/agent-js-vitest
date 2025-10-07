@@ -4,7 +4,7 @@ export const mockedDate = '2024-09-23T12:20:59.392987Z';
 export class RPClientMock {
   private config: ReportPortalConfig;
 
-  constructor(config?: ReportPortalConfig) {
+  constructor(config: ReportPortalConfig) {
     this.config = config;
   }
 
