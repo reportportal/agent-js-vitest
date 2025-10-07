@@ -1,5 +1,3 @@
-
-## [5.1.2] - 2025-10-07
 ### Added
 - Vitest 2.x and 3.x versions support.
 - `error.message` is now used when extending test description instead of `error.stack` to improve readability, thanks to @lcharlois-neotys.
