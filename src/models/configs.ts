@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 EPAM Systems
+ *  Copyright 2025 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,18 @@ export interface RestClientConfig extends AxiosRequestConfig {
 }
 
 interface ClientConfig {
-  apiKey: string;
   project: string;
   endpoint: string;
   launch: string;
+  apiKey?: string;
+  oauth?: {
+    tokenEndpoint: string;
+    username: string;
+    password: string;
+    clientId: string;
+    clientSecret?: string;
+    scope?: string;
+  };
 
   debug?: boolean;
   isLaunchMergeRequired?: boolean; // not used for this agent
