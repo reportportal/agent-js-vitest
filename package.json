@@ -1,6 +1,6 @@
 {
   "name": "@reportportal/agent-js-vitest",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "Agent to integrate Vitest with ReportPortal.",
   "scripts": {
     "build": "npm run clean && tsc",
