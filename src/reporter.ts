@@ -45,7 +45,7 @@ import {
 } from './utils';
 import {
   LAUNCH_MODES,
-  LOG_LEVELS,
+  PREDEFINED_LOG_LEVELS,
   STATUSES,
   TEST_ITEM_TYPES,
   TASK_MODE,
@@ -203,7 +203,7 @@ export class RPReporter implements Reporter {
 
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
-          level: LOG_LEVELS.ERROR,
+          level: PREDEFINED_LOG_LEVELS.ERROR,
           message: error.stack,
         };
         this.sendLog(testItemId, logRq);
@@ -211,7 +211,7 @@ export class RPReporter implements Reporter {
         if ('diff' in error) {
           const logRqDiff: LogRQ = {
             time: finishTestItemObj.endTime,
-            level: LOG_LEVELS.ERROR,
+            level: PREDEFINED_LOG_LEVELS.ERROR,
             message: `\`\`\`diff\n${error.diff}\n\`\`\``,
           };
           this.sendLog(testItemId, logRqDiff);
@@ -261,7 +261,7 @@ export class RPReporter implements Reporter {
     const { promise } = this.client.sendLog(
       testItemId,
       {
-        level: LOG_LEVELS.INFO,
+        level: PREDEFINED_LOG_LEVELS.INFO,
         time: clientHelpers.now(),
         ...logRqWithoutFile,
       },
@@ -277,10 +277,10 @@ export class RPReporter implements Reporter {
     }
 
     const testItemId = this.testItems.get(taskId)?.id;
-    let level = LOG_LEVELS.INFO;
+    let level = PREDEFINED_LOG_LEVELS.INFO;
 
     if (type === 'stderr') {
-      level = isErrorLog(content) ? LOG_LEVELS.ERROR : LOG_LEVELS.WARN;
+      level = isErrorLog(content) ? PREDEFINED_LOG_LEVELS.ERROR : PREDEFINED_LOG_LEVELS.WARN;
     }
 
     const logRq: LogRQ = {
