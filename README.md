@@ -269,3 +269,20 @@ test('should contain attributes',({ task }) => {
   expect(true).toBe(true);
 });
 ```
+
+##### log
+Send log message to ReportPortal for the current test with configurable log level. Should be called inside of corresponding test.<br/>
+`ReportingApi.log(task: vitest.Task, message: string, level?: LOG_LEVELS);`<br/>
+**required**: `task`, `message`<br/>
+**optional**: `level` (default: 'INFO')<br/>
+where `LOG_LEVELS` supports predefined levels (TRACE, DEBUG, INFO, WARN, ERROR, FATAL) or custom string.<br/>
+Example:
+```javascript
+import { PREDEFINED_LOG_LEVELS } from '@reportportal/agent-js-vitest';
+
+test('should contain custom logs',({ task }) => {
+  ReportingApi.log(task, 'This is an info log');
+  ReportingApi.log(task, 'This is a debug log', PREDEFINED_LOG_LEVELS.WARN);
+  ReportingApi.log(task, 'This is a debug log', 'custom');
+});
+```
