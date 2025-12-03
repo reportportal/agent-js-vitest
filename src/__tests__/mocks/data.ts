@@ -23,6 +23,7 @@ function createMockFile(): RunnerTestFile {
   const file: RunnerTestFile = {
     id: 'file-id',
     name: 'test.ts',
+    fullName: '/test.ts',
     type: 'suite',
     mode: 'run',
     meta: {},
@@ -44,6 +45,7 @@ export function getTask(): RunnerTask {
   const suite: RunnerTestSuite = {
     id: 'id',
     name: 'task',
+    fullName: '/test.ts > task',
     type: 'suite',
     mode: 'run',
     meta: {},
