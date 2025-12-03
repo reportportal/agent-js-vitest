@@ -6,8 +6,11 @@ export enum TASK_MODE {
 }
 
 export enum TASK_STATUS {
-  pass = 'pass',
-  fail = 'fail',
+  passed = 'passed',
+  failed = 'failed',
+  skipped = 'skipped',
+  pending = 'pending',
+  queued = 'queued',
 }
 
-export const FINISHED_STATES = ['pass', 'fail', 'skip'];
+export const FINISHED_STATES = [TASK_STATUS.passed, TASK_STATUS.failed, TASK_STATUS.skipped];
