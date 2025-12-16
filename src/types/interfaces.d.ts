@@ -41,7 +41,7 @@ declare namespace Interfaces {
   }
 
   interface ReportingApi {
-    attachment: (task: vitest.Task, data: Attachment, description?: string) => void;
+    attachment: (task: vitest.RunnerTask, data: Attachment, description?: string) => void;
   }
 
   interface GlobalReportingApi {
