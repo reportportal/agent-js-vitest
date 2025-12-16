@@ -289,7 +289,7 @@ export class RPReporter implements Reporter {
     }
 
     if (Array.isArray(attributes)) {
-      finishTestItemObj.attributes = attributes;
+      finishTestItemObj.attributes = [...(finishTestItemObj.attributes || []), ...attributes];
     }
 
     if (description) {
