@@ -21,33 +21,17 @@ import * as vitest from 'vitest';
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
 import { Attribute, RPTaskMeta } from './models';
 
-export const isFalse = (value: string | boolean | undefined): boolean =>
-  [false, 'false'].includes(value);
-
 export const getAgentInfo = (): { version: string; name: string } => ({
   version: pjsonVersion,
   name: pjsonName,
 });
 
-export const getSystemAttributes = (skippedIssue = true): Array<Attribute> => {
-  const systemAttributes = [
-    {
-      key: 'agent',
-      value: `${pjsonName}|${pjsonVersion}`,
-      system: true,
-    },
-  ];
-
-  if (isFalse(skippedIssue)) {
-    const skippedIssueAttribute = {
-      key: 'skippedIssue',
-      value: 'false',
-      system: true,
-    };
-    systemAttributes.push(skippedIssueAttribute);
-  }
-
-  return systemAttributes;
+export const getSystemAttribute = (): Attribute => {
+  return {
+    key: 'agent',
+    value: `${pjsonName}|${pjsonVersion}`,
+    system: true,
+  };
 };
 
 export const promiseErrorHandler = (promise: Promise<void>, message = ''): Promise<void> =>
