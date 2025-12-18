@@ -30,12 +30,12 @@ import {
 } from './models';
 import {
   getAgentInfo,
-  getSystemAttributes,
   promiseErrorHandler,
   getCodeRef,
   getBasePath,
   isErrorLog,
   isRPTaskMeta,
+  getSystemAttribute,
 } from './utils';
 import {
   LAUNCH_MODES,
@@ -88,7 +88,13 @@ export class RPReporter implements Reporter {
 
     const agentInfo = getAgentInfo();
 
-    this.client = new RPClient(this.config, agentInfo);
+    this.client = new RPClient(
+      {
+        ...this.config,
+        skippedIsNotIssue: this.config.skippedIssue === false,
+      },
+      agentInfo,
+    );
   }
 
   addRequestToPromisesQueue(promise: Promise<void>, failMessage: string): void {
@@ -99,16 +105,15 @@ export class RPReporter implements Reporter {
   onInit(vitestInstance: Vitest): void {
     this.rootDir = vitestInstance.config.root;
 
-    const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
-      this.config;
-    const systemAttributes: Attribute[] = getSystemAttributes(skippedIssue);
+    const { launch, description, attributes, rerun, rerunOf, mode, launchId } = this.config;
+    const systemAttribute: Attribute = getSystemAttribute();
 
     const startLaunchObj: StartLaunchObjType = {
       name: launch,
       startTime: clientHelpers.now(),
       description,
       attributes:
-        attributes && attributes.length ? attributes.concat(systemAttributes) : systemAttributes,
+        attributes && attributes.length ? attributes.concat(systemAttribute) : [systemAttribute],
       rerun,
       rerunOf,
       mode: mode || LAUNCH_MODES.DEFAULT,
