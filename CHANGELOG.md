@@ -1,3 +1,5 @@
+### Added
+- `log` method in Reporting API to send custom log messages with configurable log levels (predefined or custom). See [Reporting API methods](https://github.com/reportportal/agent-js-vitest?tab=readme-ov-file#log) for details.
 
 ## [5.2.1] - 2025-10-21
 ### Added
