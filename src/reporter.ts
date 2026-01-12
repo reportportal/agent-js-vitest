@@ -90,7 +90,8 @@ export class RPReporter implements Reporter {
     this.client = new RPClient(
       {
         ...this.config,
-        skippedIsNotIssue: this.config.skippedIssue === false,
+        skippedIsNotIssue:
+          String(this.config.skippedIssue).toLowerCase() === 'false',        
       },
       agentInfo,
     );
