@@ -10,19 +10,22 @@ import {
 } from '../utils';
 import { RPTaskMeta } from '../models';
 
-const MOCK_AGENT_INFO = {
+jest.mock('../../package.json', () => ({
+  name: '@reportportal/agent-js-vitest',
+  version: '1.0.0',
+}));
+
+const mockAgentInfo = {
   name: '@reportportal/agent-js-vitest',
   version: '1.0.0',
 };
-
-jest.mock('../../package.json', () => MOCK_AGENT_INFO);
 
 describe('utils', () => {
   describe('getAgentInfo', () => {
     it('should return agent name and version from package.json', () => {
       const agentInfo = getAgentInfo();
 
-      expect(agentInfo).toEqual(MOCK_AGENT_INFO);
+      expect(agentInfo).toEqual(mockAgentInfo);
     });
   });
 
@@ -32,7 +35,7 @@ describe('utils', () => {
 
       expect(systemAttribute).toEqual({
         key: 'agent',
-        value: `${MOCK_AGENT_INFO.name}|${MOCK_AGENT_INFO.version}`,
+        value: `${mockAgentInfo.name}|${mockAgentInfo.version}`,
         system: true,
       });
     });
