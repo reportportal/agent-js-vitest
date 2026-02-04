@@ -11,11 +11,6 @@ import type {
 import type { Vitest } from 'vitest/node';
 import type { TestError } from '@vitest/utils';
 
-export const MOCK_AGENT_INFO = {
-  name: '@reportportal/agent-js-vitest',
-  version: '1.0.0',
-};
-
 export function getVitestInstance(root = '/test/root'): Vitest {
   return {
     config: {

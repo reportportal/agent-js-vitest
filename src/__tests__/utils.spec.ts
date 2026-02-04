@@ -9,9 +9,13 @@ import {
   isRPTaskMeta,
 } from '../utils';
 import { RPTaskMeta } from '../models';
-import { MOCK_AGENT_INFO } from './mocks/data';
 
-jest.mock('../../package.json', () => require('./mocks/data').MOCK_AGENT_INFO);
+const MOCK_AGENT_INFO = {
+  name: '@reportportal/agent-js-vitest',
+  version: '1.0.0',
+};
+
+jest.mock('../../package.json', () => MOCK_AGENT_INFO);
 
 describe('utils', () => {
   describe('getAgentInfo', () => {

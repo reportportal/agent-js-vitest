@@ -490,7 +490,11 @@ describe('RPReporter', () => {
       const taskResult = createMockTaskResult({
         state: TASK_STATUS.fail,
         errors: [
-          { message: 'Assertion failed', stack: 'Error: Assertion failed', diff: '- expected\n+ received' },
+          {
+            message: 'Assertion failed',
+            stack: 'Error: Assertion failed',
+            diff: '- expected\n+ received',
+          },
         ],
       });
       const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
