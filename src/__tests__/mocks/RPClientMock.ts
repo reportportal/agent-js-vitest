@@ -47,4 +47,3 @@ export class RPClientMock {
     now: jest.fn().mockReturnValue(Date.now()),
   };
 }
-
