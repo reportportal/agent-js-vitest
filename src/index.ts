@@ -17,11 +17,12 @@
 
 import { RPReporter } from './reporter';
 import { ReportingApi } from './reportingApi';
-import { GlobalReportingApi } from './models';
+import { GlobalReportingApi, LOG_LEVELS } from './models';
+import { PREDEFINED_LOG_LEVELS } from './constants';
 
 declare global {
   const ReportingApi: GlobalReportingApi;
 }
 
-export { RPReporter, ReportingApi };
+export { RPReporter, ReportingApi, LOG_LEVELS, PREDEFINED_LOG_LEVELS };
 export default RPReporter;

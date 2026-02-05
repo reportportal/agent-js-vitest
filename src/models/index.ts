@@ -27,7 +27,7 @@ import {
 } from './reporting';
 import { ReportPortalConfig } from './configs';
 import { Attribute } from './common';
-
+import { LOG_LEVELS, PREDEFINED_LOG_LEVELS } from '../constants';
 export {
   StartLaunchObjType,
   StartTestObjType,
@@ -39,4 +39,6 @@ export {
   ReportingApi,
   GlobalReportingApi,
   LogRQ,
+  LOG_LEVELS,
+  PREDEFINED_LOG_LEVELS,
 };

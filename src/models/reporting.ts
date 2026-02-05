@@ -79,6 +79,7 @@ export interface ReportingApi {
   attributes: (context: RunnerTask, data: Attribute[]) => void;
   testCaseId: (context: RunnerTask, data: string) => void;
   description: (context: RunnerTask, data: string) => void;
+  log: (context: RunnerTask, message: string, level?: LOG_LEVELS) => void;
 }
 
 export interface GlobalReportingApi {
@@ -86,4 +87,5 @@ export interface GlobalReportingApi {
   attributes: (data: Attribute[]) => void;
   testCaseId: (data: string) => void;
   description: (data: string) => void;
+  log: (message: string, level?: LOG_LEVELS) => void;
 }

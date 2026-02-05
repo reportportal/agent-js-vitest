@@ -49,11 +49,25 @@ const description = (task: vitest.Task, data: string) => {
   }
 };
 
+const log = (
+  task: vitest.Task,
+  message: string,
+  level: Models.LOG_LEVELS = Models.PREDEFINED_LOG_LEVELS.INFO,
+) => {
+  injectRPTaskMeta(task);
+  (task.meta as Models.RPTaskMeta).rpMeta.test.logs.push({
+    message,
+    level,
+    time: clientHelpers.now(),
+  });
+};
+
 export const ReportingApi: Models.ReportingApi = {
   attachment,
   attributes,
   testCaseId,
   description,
+  log,
 };
 
 export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi => ({
@@ -61,4 +75,6 @@ export const bindReportingApi = (task: vitest.Task): Models.GlobalReportingApi =
   attributes: (data: Models.Attribute[]) => attributes(task, data),
   testCaseId: (data: string) => testCaseId(task, data),
   description: (data: string) => description(task, data),
+  log: (message: string, level: Models.LOG_LEVELS = Models.PREDEFINED_LOG_LEVELS.INFO) =>
+    log(task, message, level),
 });

@@ -47,7 +47,7 @@ describe('onTaskUpdate', () => {
         attributes,
         description,
         testCaseId,
-        endTime: '2024-09-23T12:20:59.392987Z',
+        endTime: mockedDate,
       };
 
       reporter.onTaskUpdate(packs);

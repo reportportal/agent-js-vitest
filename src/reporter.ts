@@ -36,16 +36,16 @@ import {
 } from './models';
 import {
   getAgentInfo,
-  getSystemAttributes,
   promiseErrorHandler,
   getCodeRef,
   getBasePath,
   isErrorLog,
   isRPTaskMeta,
+  getSystemAttribute,
 } from './utils';
 import {
   LAUNCH_MODES,
-  LOG_LEVELS,
+  PREDEFINED_LOG_LEVELS,
   STATUSES,
   TEST_ITEM_TYPES,
   TASK_MODE,
@@ -87,7 +87,13 @@ export class RPReporter implements Reporter {
 
     const agentInfo = getAgentInfo();
 
-    this.client = new RPClient(this.config, agentInfo);
+    this.client = new RPClient(
+      {
+        ...this.config,
+        skippedIsNotIssue: String(this.config.skippedIssue).toLowerCase() === 'false',
+      },
+      agentInfo,
+    );
   }
 
   addRequestToPromisesQueue(promise: Promise<void>, failMessage: string): void {
@@ -98,16 +104,15 @@ export class RPReporter implements Reporter {
   onInit(vitestInstance: Vitest): void {
     this.rootDir = vitestInstance.config.root;
 
-    const { launch, description, attributes, skippedIssue, rerun, rerunOf, mode, launchId } =
-      this.config;
-    const systemAttributes: Attribute[] = getSystemAttributes(skippedIssue);
+    const { launch, description, attributes, rerun, rerunOf, mode, launchId } = this.config;
+    const systemAttribute: Attribute = getSystemAttribute();
 
     const startLaunchObj: StartLaunchObjType = {
       name: launch,
       startTime: clientHelpers.now(),
       description,
       attributes:
-        attributes && attributes.length ? attributes.concat(systemAttributes) : systemAttributes,
+        attributes && attributes.length ? attributes.concat(systemAttribute) : [systemAttribute],
       rerun,
       rerunOf,
       mode: mode || LAUNCH_MODES.DEFAULT,
@@ -203,7 +208,7 @@ export class RPReporter implements Reporter {
 
         const logRq: LogRQ = {
           time: finishTestItemObj.endTime,
-          level: LOG_LEVELS.ERROR,
+          level: PREDEFINED_LOG_LEVELS.ERROR,
           message: error.stack,
         };
         this.sendLog(testItemId, logRq);
@@ -211,7 +216,7 @@ export class RPReporter implements Reporter {
         if ('diff' in error) {
           const logRqDiff: LogRQ = {
             time: finishTestItemObj.endTime,
-            level: LOG_LEVELS.ERROR,
+            level: PREDEFINED_LOG_LEVELS.ERROR,
             message: `\`\`\`diff\n${error.diff}\n\`\`\``,
           };
           this.sendLog(testItemId, logRqDiff);
@@ -261,7 +266,7 @@ export class RPReporter implements Reporter {
     const { promise } = this.client.sendLog(
       testItemId,
       {
-        level: LOG_LEVELS.INFO,
+        level: PREDEFINED_LOG_LEVELS.INFO,
         time: clientHelpers.now(),
         ...logRqWithoutFile,
       },
@@ -277,10 +282,10 @@ export class RPReporter implements Reporter {
     }
 
     const testItemId = this.testItems.get(taskId)?.id;
-    let level = LOG_LEVELS.INFO;
+    let level = PREDEFINED_LOG_LEVELS.INFO;
 
     if (type === 'stderr') {
-      level = isErrorLog(content) ? LOG_LEVELS.ERROR : LOG_LEVELS.WARN;
+      level = isErrorLog(content) ? PREDEFINED_LOG_LEVELS.ERROR : PREDEFINED_LOG_LEVELS.WARN;
     }
 
     const logRq: LogRQ = {
