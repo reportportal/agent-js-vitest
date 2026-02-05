@@ -2,9 +2,8 @@ import type { RunnerTask } from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { ReportingApi, bindReportingApi } from '../reportingApi';
 import { getTask } from './mocks/data';
+import { mockedDate } from './mocks/RPClientMock';
 import { RPTaskMeta, PREDEFINED_LOG_LEVELS } from '../models';
-
-const mockedDate = '2024-09-23T12:20:59.392987Z';
 
 describe('ReportingApi', () => {
   jest.spyOn(clientHelpers, 'now').mockReturnValue(mockedDate);
