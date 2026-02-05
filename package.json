@@ -27,7 +27,7 @@
     "/build"
   ],
   "dependencies": {
-    "@reportportal/client-javascript": "^5.5.8"
+    "@reportportal/client-javascript": "~5.5.10"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
