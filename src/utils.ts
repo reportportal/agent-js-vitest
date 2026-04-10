@@ -18,12 +18,17 @@
 import { normalize, sep } from 'node:path';
 import * as vitest from 'vitest';
 // @ts-ignore
-import { name as pjsonName, version as pjsonVersion } from '../package.json';
+import { name as pjsonName, version as pjsonVersion, devDependencies as pjsonDevDeps } from '../package.json';
 import { Attribute, RPTaskMeta } from './models';
 
-export const getAgentInfo = (): { version: string; name: string } => ({
+const declaredVersion = ((pjsonDevDeps || {}).vitest || '').replace(/^\D+/, '');
+// eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+const framework_version = require('vitest/package.json').version || declaredVersion;
+
+export const getAgentInfo = (): { version: string; name: string; framework_version?: string } => ({
   version: pjsonVersion,
   name: pjsonName,
+  framework_version,
 });
 
 export const getSystemAttribute = (): Attribute => {
