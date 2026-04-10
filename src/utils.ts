@@ -17,7 +17,6 @@
 
 import { normalize, sep } from 'node:path';
 import * as vitest from 'vitest';
-// @ts-ignore
 import {
   name as pjsonName,
   version as pjsonVersion,
