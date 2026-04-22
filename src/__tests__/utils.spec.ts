@@ -13,7 +13,6 @@ import { RPTaskMeta } from '../models';
 jest.mock('../../package.json', () => ({
   name: '@reportportal/agent-js-vitest',
   version: '1.0.0',
-  devDependencies: { vitest: '^3.0.0' },
 }));
 
 jest.mock('vitest/package.json', () => ({

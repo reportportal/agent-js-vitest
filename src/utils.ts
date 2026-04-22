@@ -17,20 +17,15 @@
 
 import { normalize, sep } from 'node:path';
 import * as vitest from 'vitest';
-import {
-  name as pjsonName,
-  version as pjsonVersion,
-  devDependencies as pjsonDevDeps,
-} from '../package.json';
+import { name as pjsonName, version as pjsonVersion } from '../package.json';
 import { Attribute, RPTaskMeta } from './models';
 
-const declaredVersion = ((pjsonDevDeps || {}).vitest || '').replace(/^\D+/, '');
-const getFrameworkVersion = (): string | undefined => {
+const getFrameworkVersion = (): string => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-    return require('vitest/package.json').version || declaredVersion || undefined;
+    return require('vitest/package.json').version || 'not_set';
   } catch {
-    return declaredVersion || undefined;
+    return 'not_set';
   }
 };
 const framework_version = getFrameworkVersion();
