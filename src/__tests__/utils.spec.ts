@@ -15,9 +15,14 @@ jest.mock('../../package.json', () => ({
   version: '1.0.0',
 }));
 
+jest.mock('vitest/package.json', () => ({
+  version: '3.2.4',
+}));
+
 const mockAgentInfo = {
   name: '@reportportal/agent-js-vitest',
   version: '1.0.0',
+  framework_version: '3.2.4',
 };
 
 describe('utils', () => {
