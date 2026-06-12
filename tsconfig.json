@@ -8,7 +8,6 @@
     "declaration": true,
     "lib": ["es2016"],
     "module": "commonjs",
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "target": "es6",
     "baseUrl": ".",
