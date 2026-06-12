@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 EPAM Systems
+ *  Copyright 2026 EPAM Systems
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,24 @@
 
 import { normalize, sep } from 'node:path';
 import * as vitest from 'vitest';
-// @ts-ignore
+// @ts-ignore to not include copy of package.json to the build
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
 import { Attribute, RPTaskMeta } from './models';
 
-export const getAgentInfo = (): { version: string; name: string } => ({
+const getFrameworkVersion = (): string => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    return require('vitest/package.json').version || 'not_set';
+  } catch {
+    return 'not_set';
+  }
+};
+const framework_version = getFrameworkVersion();
+
+export const getAgentInfo = (): { version: string; name: string; framework_version?: string } => ({
   version: pjsonVersion,
   name: pjsonName,
+  framework_version,
 });
 
 export const getSystemAttribute = (): Attribute => {

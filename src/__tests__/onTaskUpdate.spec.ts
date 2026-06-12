@@ -52,8 +52,8 @@ describe('onTaskUpdate', () => {
 
       reporter.onTaskUpdate(packs);
 
-      expect(reporter.client.finishTestItem).toBeCalledTimes(1);
-      expect(reporter.client.finishTestItem).toBeCalledWith(testItemId, finishTestItemRQ);
+      expect(reporter.client.finishTestItem).toHaveBeenCalledTimes(1);
+      expect(reporter.client.finishTestItem).toHaveBeenCalledWith(testItemId, finishTestItemRQ);
     });
   });
 });
