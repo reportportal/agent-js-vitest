@@ -174,9 +174,11 @@ export function createMockTestCase(options: MockTestCaseOptions = {}): TestCase 
       tags: undefined,
     },
     result: jest.fn().mockReturnValue({ state, errors }),
-    diagnostic: jest.fn().mockReturnValue(
-      startTime !== undefined && duration !== undefined ? { startTime, duration } : undefined,
-    ),
+    diagnostic: jest
+      .fn()
+      .mockReturnValue(
+        startTime !== undefined && duration !== undefined ? { startTime, duration } : undefined,
+      ),
     meta: jest.fn().mockReturnValue(metaValue ?? {}),
   } as unknown as TestCase;
 }
