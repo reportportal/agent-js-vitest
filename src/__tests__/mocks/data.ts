@@ -66,6 +66,9 @@ interface MockTestTaskOptions {
 export function createMockTestTask(options: MockTestTaskOptions = {}): RunnerTestCase {
   const file = createMockFile();
   return {
+    artifacts: [],
+    fullName: '',
+    fullTestName: '',
     id: options.id ?? 'testId',
     name: options.name ?? 'test name',
     type: 'test',
@@ -89,6 +92,7 @@ interface MockSuiteTaskOptions {
 export function createMockSuiteTask(options: MockSuiteTaskOptions = {}): RunnerTestSuite {
   const file = createMockFile();
   return {
+    fullName: '',
     id: options.id ?? 'suiteId',
     name: options.name ?? 'suite name',
     type: 'suite',

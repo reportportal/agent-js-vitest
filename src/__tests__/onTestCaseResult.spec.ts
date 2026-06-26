@@ -9,7 +9,7 @@ type ReporterTestCase = Parameters<RPReporter['onTestCaseResult']>[0];
 
 const createTestCase = ({
   id,
-  state = 'passed',
+  state = TASK_STATUS.passed,
   errors,
   meta,
   diagnosticStart = 1000,
@@ -88,7 +88,11 @@ describe('onTestCaseResult', () => {
           },
         },
       };
-      const testCase = createTestCase({ id: testTaskId, meta: taskMeta, state: TASK_STATUS.pass });
+      const testCase = createTestCase({
+        id: testTaskId,
+        meta: taskMeta,
+        state: TASK_STATUS.passed,
+      });
       const finishTestItemRQ = {
         status: STATUSES.PASSED,
         attributes,
