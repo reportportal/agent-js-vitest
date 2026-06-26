@@ -1,3 +1,7 @@
+### Added
+- Vitest 4.x versions support.
+### Changed
+- **Breaking change** Drop support of Vitest versions 1.x-2.x. The version [5.2.3](https://github.com/reportportal/agent-js-vitest/releases/tag/v5.2.3) is the latest that supports it.
 
 ## [5.2.3] - 2026-06-12
 ### Added

@@ -1,13 +1,13 @@
-import type { RunnerTaskResultPack, RunnerTestFile, UserConsoleLog } from 'vitest';
+import type { UserConsoleLog } from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
 import { RPClientMock, mockedDate } from './mocks/RPClientMock';
 import {
   getVitestInstance,
-  createMockTestTask,
-  createMockSuiteTask,
-  createMockTaskResult,
+  createMockTestCase,
+  createMockTestSuite,
+  createMockTestModule,
 } from './mocks/data';
 import { ReportPortalConfig } from '../models';
 import { STATUSES, TASK_STATUS, TASK_MODE, PREDEFINED_LOG_LEVELS } from '../constants';
@@ -120,63 +120,55 @@ describe('RPReporter', () => {
     });
   });
 
-  describe('onCollected', () => {
+  describe('onTestModuleCollected', () => {
     beforeEach(() => {
       reporter.rootDir = '/test/root';
     });
 
-    it('should start test items for collected files', () => {
-      const files: RunnerTestFile[] = [
-        {
-          id: 'file1',
-          name: 'test.spec.ts',
-          type: 'suite',
-          mode: 'run',
-          filepath: '/test/root/src/test.spec.ts',
-          tasks: [],
-          meta: {},
-          projectName: 'test',
-          pool: 'forks',
-          collectDuration: 0,
-          setupDuration: 0,
-          importDurations: {},
-          get file() {
-            return this;
-          },
-        },
-      ];
+    it('should start test item for collected module', () => {
+      const testModule = createMockTestModule({
+        id: 'file1',
+        moduleId: '/test/root/src/test.spec.ts',
+        relativeModuleId: 'src/test.spec.ts',
+      });
 
-      reporter.onCollected(files);
+      reporter.onTestModuleCollected(testModule);
 
       expect(reporter.client.startTestItem).toHaveBeenCalled();
     });
 
-    it('should handle empty files array', () => {
-      reporter.onCollected([]);
+    it('should not call startTestItem when module is already tracked', () => {
+      const testModule = createMockTestModule({ id: 'file1' });
+      reporter.testItems.set('file1', { id: 'existingId' });
+
+      reporter.onTestModuleCollected(testModule);
 
       expect(reporter.client.startTestItem).not.toHaveBeenCalled();
     });
 
-    it('should handle undefined files', () => {
-      reporter.onCollected(undefined);
+    it('should recursively start children for module with children', () => {
+      const testCase = createMockTestCase({ id: 'test1' });
+      const testModule = createMockTestModule({ id: 'module1', children: [testCase] });
 
-      expect(reporter.client.startTestItem).not.toHaveBeenCalled();
+      reporter.onTestModuleCollected(testModule);
+
+      expect(reporter.client.startTestItem).toHaveBeenCalledTimes(2);
     });
   });
 
-  describe('startDescendants', () => {
+  describe('startReportedEntity', () => {
     beforeEach(() => {
       reporter.rootDir = '/test/root';
     });
 
     it('should finish skipped tests immediately', () => {
-      const skippedTask = createMockTestTask({
+      const skippedTask = createMockTestCase({
         id: 'skippedTest',
         name: 'skipped test',
         mode: 'skip',
       });
 
-      reporter.startDescendants(skippedTask, '/src/test.ts');
+      reporter.startReportedEntity(skippedTask, '/src/test.ts');
 
       expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
         expect.any(String),
@@ -187,13 +179,13 @@ describe('RPReporter', () => {
     });
 
     it('should finish todo tests with todo attribute', () => {
-      const todoTask = createMockTestTask({
+      const todoTask = createMockTestCase({
         id: 'todoTest',
         name: 'todo test',
         mode: 'todo',
       });
 
-      reporter.startDescendants(todoTask, '/src/test.ts');
+      reporter.startReportedEntity(todoTask, '/src/test.ts');
 
       expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
         expect.any(String),
@@ -205,88 +197,94 @@ describe('RPReporter', () => {
     });
 
     it('should add test item to testItems map for run mode', () => {
-      const runTask = createMockTestTask({
+      const runTask = createMockTestCase({
         id: 'runTest',
         name: 'running test',
         mode: 'run',
       });
 
-      reporter.startDescendants(runTask, '/src/test.ts');
+      reporter.startReportedEntity(runTask, '/src/test.ts');
 
       expect(reporter.testItems.has('runTest')).toBe(true);
     });
 
     it('should recursively start descendants for suite', () => {
-      const innerTask = createMockTestTask({
+      const innerTask = createMockTestCase({
         id: 'test1',
         name: 'test 1',
         mode: 'run',
       });
-      const suiteTask = createMockSuiteTask({
+      const suiteTask = createMockTestSuite({
         id: 'suite1',
         name: 'test suite',
         mode: 'run',
-        tasks: [innerTask],
+        children: [innerTask],
       });
 
-      reporter.startDescendants(suiteTask, '/src/test.ts');
+      reporter.startReportedEntity(suiteTask, '/src/test.ts');
 
       expect(reporter.client.startTestItem).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('getFinishTestItemObj', () => {
-    it('should return failed status when no task result', () => {
-      const result = reporter.getFinishTestItemObj();
+    it('should return failed status when TestCase result state is unknown', () => {
+      const testCase = createMockTestCase({ id: 'testId', state: 'unrecognized' });
+
+      const result = reporter.getFinishTestItemObj(testCase);
 
       expect(result.status).toBe(STATUSES.FAILED);
       expect(result.endTime).toBe(mockedDate);
     });
 
-    it('should return passed status for passed task', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.pass,
+    it('should return passed status for passed TestCase', () => {
+      const testCase = createMockTestCase({
+        id: 'testId',
+        state: TASK_STATUS.passed,
         startTime: 1000,
         duration: 500,
       });
 
-      const result = reporter.getFinishTestItemObj(taskResult);
+      const result = reporter.getFinishTestItemObj(testCase);
 
       expect(result.status).toBe(STATUSES.PASSED);
       expect(result.endTime).toBe(1500);
     });
 
-    it('should return failed status for failed task', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.fail,
+    it('should return failed status for failed TestCase', () => {
+      const testCase = createMockTestCase({
+        id: 'testId',
+        state: TASK_STATUS.failed,
         startTime: 1000,
         duration: 500,
       });
 
-      const result = reporter.getFinishTestItemObj(taskResult);
+      const result = reporter.getFinishTestItemObj(testCase);
 
       expect(result.status).toBe(STATUSES.FAILED);
       expect(result.endTime).toBe(1500);
     });
 
-    it('should return skipped status for skipped task', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_MODE.skip,
+    it('should return skipped status for skipped TestCase', () => {
+      const testCase = createMockTestCase({
+        id: 'testId',
+        state: TASK_STATUS.skipped,
       });
 
-      const result = reporter.getFinishTestItemObj(taskResult);
+      const result = reporter.getFinishTestItemObj(testCase);
 
       expect(result.status).toBe(STATUSES.SKIPPED);
     });
 
     it('should use clientHelpers.now() when startTime or duration is not finite', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.pass,
+      const testCase = createMockTestCase({
+        id: 'testId',
+        state: TASK_STATUS.passed,
         startTime: NaN,
         duration: NaN,
       });
 
-      const result = reporter.getFinishTestItemObj(taskResult);
+      const result = reporter.getFinishTestItemObj(testCase);
 
       expect(result.status).toBe(STATUSES.PASSED);
       expect(result.endTime).toBe(mockedDate);
@@ -441,7 +439,7 @@ describe('RPReporter', () => {
     });
   });
 
-  describe('onTaskUpdate', () => {
+  describe('onTestCaseResult', () => {
     const testTaskId = 'testTaskId';
     const testItemId = 'testId';
 
@@ -451,31 +449,32 @@ describe('RPReporter', () => {
 
     it('should not finish test if already finished', () => {
       reporter.testItems.set(testTaskId, { id: testItemId, finishSend: true });
-      const taskResult = createMockTaskResult({ state: TASK_STATUS.pass });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
+      const testCase = createMockTestCase({ id: testTaskId, state: TASK_STATUS.passed });
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
       expect(reporter.client.finishTestItem).not.toHaveBeenCalled();
     });
 
-    it('should not finish test if state is not in FINISHED_STATES', () => {
-      const taskResult = createMockTaskResult({ state: 'run' });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
+    it('should finish test case and call finishTestItem', () => {
+      const testCase = createMockTestCase({ id: testTaskId, state: TASK_STATUS.passed });
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
-      expect(reporter.client.finishTestItem).not.toHaveBeenCalled();
+      expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
+        testItemId,
+        expect.objectContaining({ status: STATUSES.PASSED }),
+      );
     });
 
     it('should handle task with errors', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.fail,
+      const testCase = createMockTestCase({
+        id: testTaskId,
+        state: TASK_STATUS.failed,
         errors: [{ message: 'Test failed', stack: 'Error: Test failed\n    at test.ts:10' }],
       });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
       expect(reporter.client.sendLog).toHaveBeenCalled();
       expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
@@ -487,8 +486,9 @@ describe('RPReporter', () => {
     });
 
     it('should add error diff to log if present', () => {
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.fail,
+      const testCase = createMockTestCase({
+        id: testTaskId,
+        state: TASK_STATUS.failed,
         errors: [
           {
             message: 'Assertion failed',
@@ -497,23 +497,21 @@ describe('RPReporter', () => {
           },
         ],
       });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
-      // Should send two logs: one for error stack, one for diff
       expect(reporter.client.sendLog).toHaveBeenCalledTimes(2);
     });
 
     it('should extend description with error when extendTestDescriptionWithLastError is true', () => {
       reporter.config.extendTestDescriptionWithLastError = true;
-      const taskResult = createMockTaskResult({
-        state: TASK_STATUS.fail,
+      const testCase = createMockTestCase({
+        id: testTaskId,
+        state: TASK_STATUS.failed,
         errors: [{ message: 'Test failed', stack: 'Error stack' }],
       });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
       expect(reporter.client.finishTestItem).toHaveBeenCalledWith(
         testItemId,
@@ -524,24 +522,23 @@ describe('RPReporter', () => {
     });
 
     it('should mark test item as finishSend after finishing', () => {
-      const taskResult = createMockTaskResult({ state: TASK_STATUS.pass });
-      const packs: RunnerTaskResultPack[] = [[testTaskId, taskResult, {}]];
+      const testCase = createMockTestCase({ id: testTaskId, state: TASK_STATUS.passed });
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
       const testItem = reporter.testItems.get(testTaskId);
       expect(testItem?.finishSend).toBe(true);
     });
   });
 
-  describe('onFinished', () => {
+  describe('onTestRunEnd', () => {
     it('should finish launch and clear state', async () => {
       reporter.config.launchId = undefined;
       const launchIdToFinish = reporter.launchId;
       reporter.promises = [Promise.resolve()];
       reporter.testItems.set('test', { id: 'testId' });
 
-      await reporter.onFinished();
+      await reporter.onTestRunEnd();
 
       expect(reporter.client.finishLaunch).toHaveBeenCalledWith(launchIdToFinish, {
         endTime: mockedDate,
@@ -553,7 +550,7 @@ describe('RPReporter', () => {
     it('should not finish launch if launchId is provided in config', async () => {
       reporter.config.launchId = 'existingLaunchId';
 
-      await reporter.onFinished();
+      await reporter.onTestRunEnd();
 
       expect(reporter.client.finishLaunch).not.toHaveBeenCalled();
     });
@@ -568,7 +565,7 @@ describe('RPReporter', () => {
       });
       reporter.promises = [delayedPromise];
 
-      await reporter.onFinished();
+      await reporter.onTestRunEnd();
 
       expect(resolved).toBe(true);
     });
