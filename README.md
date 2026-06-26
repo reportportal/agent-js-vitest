@@ -7,8 +7,8 @@ Agent to integrate Vitest with ReportPortal.
 ## Supported Versions
 
 This agent supports Vitest versions:
-- **1.x - 3.x** - tested and compatible
-- **3.x** recommended
+- **4.x** - recommended. Supported by agent versions from 5.3.0.
+- **1.x - 3.x** - supported by agent versions 5.0.x - 5.2.x.
 
 ## Installation
 Install the agent in your project:
