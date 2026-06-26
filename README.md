@@ -7,8 +7,8 @@ Agent to integrate Vitest with ReportPortal.
 ## Supported Versions
 
 This agent supports Vitest versions:
-- **1.x - 3.x** - tested and compatible
-- **3.x** recommended
+- **4.x** - recommended. Supported by agent versions from 5.3.0.
+- **1.x - 3.x** - supported by agent versions 5.0.x - 5.2.x.
 
 ## Installation
 Install the agent in your project:
@@ -207,7 +207,7 @@ The API provides methods for attaching data.<br/>
 ##### attachment
 
 Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
-`ReportingApi.attachment(task: vitest.Task, data: Attachment, description?: string);`<br/>
+`ReportingApi.attachment(task: vitest.RunnerTask, data: Attachment, description?: string);`<br/>
 **required**: `task`, `data`<br/>
 **optional**: `description`<br/>
 where `Attachment` type is `{name: string; type: string; content: string | Buffer;}`<br/>
@@ -229,7 +229,7 @@ test('should contain logs with attachments',({ task }) => {
 
 ##### testCaseId
 Add testCaseId to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
-`ReportingApi.testCaseId(task: vitest.Task, data: string);`<br/>
+`ReportingApi.testCaseId(task: vitest.RunnerTask, data: string);`<br/>
 **required**: `task`, `data`<br/>
 Example:
 ```javascript
@@ -242,7 +242,7 @@ test('should contain testCaseId',({ task }) => {
 
 ##### description
 Add description to ReportPortal for the current test. In case the user call the method more than one time, the existing description will be extended. Should be called inside of corresponding test.<br/>
-`ReportingApi.description(task: vitest.Task, data: string);`<br/>
+`ReportingApi.description(task: vitest.RunnerTask, data: string);`<br/>
 **required**: `task`, `data`<br/>
 Example:
 ```javascript
@@ -255,7 +255,7 @@ test('should contain description',({ task }) => {
 
 ##### attributes
 Send file to ReportPortal for the current test. Should be called inside of corresponding test.<br/>
-`ReportingApi.attributes(task: vitest.Task, data: Attribute[]);`<br/>
+`ReportingApi.attributes(task: vitest.RunnerTask, data: Attribute[]);`<br/>
 **required**: `task`, `data`<br/>
 where `Attribute` type is `{ value: string; key?: string; system?: boolean; }`<br/>
 Example:
@@ -273,7 +273,7 @@ test('should contain attributes',({ task }) => {
 
 ##### log
 Send log message to ReportPortal for the current test with configurable log level. Should be called inside of corresponding test.<br/>
-`ReportingApi.log(task: vitest.Task, message: string, level?: LOG_LEVELS);`<br/>
+`ReportingApi.log(task: vitest.RunnerTask, message: string, level?: LOG_LEVELS);`<br/>
 **required**: `task`, `message`<br/>
 **optional**: `level` (default: 'INFO')<br/>
 where `LOG_LEVELS` supports predefined levels (TRACE, DEBUG, INFO, WARN, ERROR, FATAL) or custom string.<br/>

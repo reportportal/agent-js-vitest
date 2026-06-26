@@ -1,4 +1,3 @@
-import type { RunnerTaskResultPack } from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/lib/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
@@ -6,7 +5,55 @@ import { RPClientMock, mockedDate } from './mocks/RPClientMock';
 import { RPTaskMeta } from '../models';
 import { STATUSES, TASK_STATUS } from '../constants';
 
-describe('onTaskUpdate', () => {
+type ReporterTestCase = Parameters<RPReporter['onTestCaseResult']>[0];
+
+const createTestCase = ({
+  id,
+  state = TASK_STATUS.passed,
+  errors,
+  meta,
+  diagnosticStart = 1000,
+  diagnosticDuration = 25,
+}: {
+  id: string;
+  state?: string;
+  errors?: unknown[];
+  meta?: RPTaskMeta;
+  diagnosticStart?: number;
+  diagnosticDuration?: number;
+}): ReporterTestCase =>
+  ({
+    id,
+    type: 'test',
+    name: 'test',
+    module: undefined,
+    options: {
+      each: false,
+      fails: false,
+      concurrent: false,
+      shuffle: false,
+      retry: 0,
+      repeats: 0,
+      mode: 'run',
+    },
+    parent: undefined,
+    result: () => ({
+      state,
+      errors,
+    }),
+    diagnostic: () => ({
+      startTime: diagnosticStart,
+      duration: diagnosticDuration,
+      slow: false,
+      heap: 0,
+      retryCount: 0,
+      repeatCount: 0,
+      flaky: false,
+    }),
+    meta: () => meta || ({} as RPTaskMeta),
+  }) as unknown as ReporterTestCase;
+
+describe('onTestCaseResult', () => {
   jest.spyOn(clientHelpers, 'now').mockReturnValue(mockedDate);
 
   let reporter: RPReporter;
@@ -41,16 +88,20 @@ describe('onTaskUpdate', () => {
           },
         },
       };
-      const packs: RunnerTaskResultPack[] = [[testTaskId, { state: TASK_STATUS.pass }, taskMeta]];
+      const testCase = createTestCase({
+        id: testTaskId,
+        meta: taskMeta,
+        state: TASK_STATUS.passed,
+      });
       const finishTestItemRQ = {
         status: STATUSES.PASSED,
         attributes,
         description,
         testCaseId,
-        endTime: mockedDate,
+        endTime: testCase.diagnostic().startTime + Math.round(testCase.diagnostic().duration),
       };
 
-      reporter.onTaskUpdate(packs);
+      reporter.onTestCaseResult(testCase);
 
       expect(reporter.client.finishTestItem).toHaveBeenCalledTimes(1);
       expect(reporter.client.finishTestItem).toHaveBeenCalledWith(testItemId, finishTestItemRQ);

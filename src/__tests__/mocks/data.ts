@@ -8,7 +8,7 @@ import type {
   TaskState,
   TaskMeta,
 } from 'vitest';
-import type { Vitest } from 'vitest/node';
+import type { Vitest, TestCase, TestSuite, TestModule } from 'vitest/node';
 import type { TestError } from '@vitest/utils';
 
 export function getVitestInstance(root = '/test/root'): Vitest {
@@ -23,6 +23,7 @@ function createMockFile(): RunnerTestFile {
   const file: RunnerTestFile = {
     id: 'file-id',
     name: 'test.ts',
+    fullName: '/test.ts',
     type: 'suite',
     mode: 'run',
     meta: {},
@@ -44,6 +45,7 @@ export function getTask(): RunnerTask {
   const suite: RunnerTestSuite = {
     id: 'id',
     name: 'task',
+    fullName: '/test.ts > task',
     type: 'suite',
     mode: 'run',
     meta: {},
@@ -64,6 +66,9 @@ interface MockTestTaskOptions {
 export function createMockTestTask(options: MockTestTaskOptions = {}): RunnerTestCase {
   const file = createMockFile();
   return {
+    artifacts: [],
+    fullName: '',
+    fullTestName: '',
     id: options.id ?? 'testId',
     name: options.name ?? 'test name',
     type: 'test',
@@ -87,6 +92,7 @@ interface MockSuiteTaskOptions {
 export function createMockSuiteTask(options: MockSuiteTaskOptions = {}): RunnerTestSuite {
   const file = createMockFile();
   return {
+    fullName: '',
     id: options.id ?? 'suiteId',
     name: options.name ?? 'suite name',
     type: 'suite',
@@ -125,4 +131,122 @@ export function createMockTaskResult(options: MockTaskResultOptions = {}): Runne
     retryCount: 0,
     repeatCount: 0,
   };
+}
+
+// Vitest v4 mock factories
+
+interface MockTestCaseOptions {
+  id?: string;
+  name?: string;
+  mode?: 'run' | 'only' | 'skip' | 'todo';
+  state?: string;
+  startTime?: number;
+  duration?: number;
+  errors?: Array<{ message?: string; stack?: string; diff?: string }>;
+  meta?: unknown;
+}
+
+export function createMockTestCase(options: MockTestCaseOptions = {}): TestCase {
+  const {
+    id = 'testId',
+    name = 'test name',
+    mode = 'run',
+    state = 'passed',
+    startTime,
+    duration,
+    errors,
+    meta: metaValue,
+  } = options;
+
+  return {
+    type: 'test' as const,
+    id,
+    name,
+    options: {
+      mode,
+      each: false,
+      fails: false,
+      concurrent: false,
+      shuffle: false,
+      retry: undefined,
+      repeats: undefined,
+      timeout: undefined,
+      tags: undefined,
+    },
+    result: jest.fn().mockReturnValue({ state, errors }),
+    diagnostic: jest
+      .fn()
+      .mockReturnValue(
+        startTime !== undefined && duration !== undefined ? { startTime, duration } : undefined,
+      ),
+    meta: jest.fn().mockReturnValue(metaValue ?? {}),
+  } as unknown as TestCase;
+}
+
+interface MockTestSuiteOptions {
+  id?: string;
+  name?: string;
+  mode?: 'run' | 'only' | 'skip' | 'todo';
+  state?: string;
+  children?: (TestCase | TestSuite)[];
+  errors?: Array<{ message?: string }>;
+}
+
+export function createMockTestSuite(options: MockTestSuiteOptions = {}): TestSuite {
+  const {
+    id = 'suiteId',
+    name = 'suite name',
+    mode = 'run',
+    state = 'passed',
+    children = [],
+    errors,
+  } = options;
+
+  return {
+    type: 'suite' as const,
+    id,
+    name,
+    options: {
+      mode,
+      each: false,
+      fails: false,
+      concurrent: false,
+      shuffle: false,
+      retry: undefined,
+      repeats: undefined,
+      timeout: undefined,
+      tags: undefined,
+    },
+    state: jest.fn().mockReturnValue(state),
+    errors: jest.fn().mockReturnValue(errors ?? []),
+    children,
+  } as unknown as TestSuite;
+}
+
+interface MockTestModuleOptions {
+  id?: string;
+  moduleId?: string;
+  relativeModuleId?: string;
+  state?: string;
+  children?: (TestCase | TestSuite)[];
+}
+
+export function createMockTestModule(options: MockTestModuleOptions = {}): TestModule {
+  const {
+    id = 'moduleId',
+    moduleId = '/test/root/src/test.spec.ts',
+    relativeModuleId = 'src/test.spec.ts',
+    state = 'passed',
+    children = [],
+  } = options;
+
+  return {
+    type: 'module' as const,
+    id,
+    moduleId,
+    relativeModuleId,
+    state: jest.fn().mockReturnValue(state),
+    errors: jest.fn().mockReturnValue([]),
+    children,
+  } as unknown as TestModule;
 }

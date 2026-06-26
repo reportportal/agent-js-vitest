@@ -47,7 +47,7 @@
     "prettier": "^3.2.5",
     "rimraf": "^3.0.2",
     "typescript": "^5.3.3",
-    "vitest": "^3.2.6"
+    "vitest": "^4.0.14"
   },
   "repository": {
     "type": "git",
