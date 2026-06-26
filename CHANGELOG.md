@@ -1,3 +1,5 @@
+
+## [5.3.0] - 2026-06-26
 ### Added
 - Vitest 4.x versions support.
 ### Changed
