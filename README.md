@@ -287,7 +287,3 @@ test('should contain custom logs',({ task }) => {
   ReportingApi.log(task, 'This is a debug log', 'custom');
 });
 ```
-
-## Code knowledge graph
-
-See [DEV_GUIDE.md](DEV_GUIDE.md#code-knowledge-graph) for details on the local code knowledge graph used by contributor tooling.
