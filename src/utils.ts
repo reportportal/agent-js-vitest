@@ -45,7 +45,7 @@ export const getSystemAttribute = (): Attribute => {
   };
 };
 
-export const promiseErrorHandler = (promise: Promise<void>, message = ''): Promise<void> =>
+export const promiseErrorHandler = (promise: Promise<unknown>, message = ''): Promise<unknown> =>
   promise.catch((err) => {
     console.error(message, err);
   });

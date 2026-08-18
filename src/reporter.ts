@@ -16,7 +16,7 @@
  */
 
 import RPClient from '@reportportal/client-javascript';
-import clientHelpers from '@reportportal/client-javascript/lib/helpers';
+import clientHelpers from '@reportportal/client-javascript/helpers';
 import type { UserConsoleLog } from 'vitest';
 import type { Reporter } from 'vitest/reporters';
 import type { Vitest, TestModule, TestSuite, TestCase } from 'vitest/node';
@@ -71,7 +71,7 @@ export class RPReporter implements Reporter {
 
   launchId: string;
 
-  promises: Promise<void>[];
+  promises: Promise<unknown>[];
 
   testItems: Map<string, TestItem>;
 
@@ -97,7 +97,7 @@ export class RPReporter implements Reporter {
     );
   }
 
-  addRequestToPromisesQueue(promise: Promise<void>, failMessage: string): void {
+  addRequestToPromisesQueue(promise: Promise<unknown>, failMessage: string): void {
     this.promises.push(promiseErrorHandler(promise, failMessage));
   }
 

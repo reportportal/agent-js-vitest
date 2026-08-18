@@ -1,5 +1,5 @@
 import * as vitest from 'vitest';
-import clientHelpers from '@reportportal/client-javascript/lib/helpers';
+import clientHelpers from '@reportportal/client-javascript/helpers';
 import * as Models from './models';
 import { isRPTaskMeta } from './utils';
 
