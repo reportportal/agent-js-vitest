@@ -15,4 +15,4 @@
  *
  */
 
-export { Attribute, Issue } from '@reportportal/client-javascript/models';
+export type { Attribute, Issue } from '@reportportal/client-javascript/models';
