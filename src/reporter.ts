@@ -20,14 +20,14 @@ import clientHelpers from '@reportportal/client-javascript/helpers';
 import type { UserConsoleLog } from 'vitest';
 import type { Reporter } from 'vitest/reporters';
 import type { Vitest, TestModule, TestSuite, TestCase } from 'vitest/node';
-import {
+import type {
   Attribute,
-  FinishTestItemObjType,
-  LogRQ,
-  ReportPortalConfig,
-  StartLaunchObjType,
-  StartTestObjType,
-} from './models';
+  FinishTestItemOptions,
+  LogOptions,
+  StartLaunchOptions,
+  StartTestItemOptions,
+} from '@reportportal/client-javascript/models';
+import { ReportPortalConfig } from './models';
 import {
   getAgentInfo,
   promiseErrorHandler,
@@ -108,7 +108,7 @@ export class RPReporter implements Reporter {
     const { launch, description, attributes, rerun, rerunOf, mode, launchId } = this.config;
     const systemAttribute: Attribute = getSystemAttribute();
 
-    const startLaunchObj: StartLaunchObjType = {
+    const startLaunchObj: StartLaunchOptions = {
       name: launch,
       startTime: clientHelpers.now(),
       description,
@@ -152,7 +152,7 @@ export class RPReporter implements Reporter {
     const hasDescendants = !isTestCase(entity);
     const codeRef = getCodeRef(basePath, parentId ? name : '');
 
-    const startTestItemObj: StartTestObjType = {
+    const startTestItemObj: StartTestItemOptions = {
       name: name,
       startTime,
       type: hasDescendants ? TEST_ITEM_TYPES.SUITE : TEST_ITEM_TYPES.STEP,
@@ -164,7 +164,7 @@ export class RPReporter implements Reporter {
     const mode = isTestCase(entity) || isTestSuite(entity) ? entity.options?.mode : undefined;
 
     if (mode === TASK_MODE.skip || mode === TASK_MODE.todo) {
-      const finishTestItemObj: FinishTestItemObjType = {
+      const finishTestItemObj: FinishTestItemOptions = {
         endTime: startTime,
         status: STATUSES.SKIPPED,
         attributes: mode === TASK_MODE.todo ? [{ value: TASK_MODE.todo }] : [],
@@ -223,8 +223,8 @@ export class RPReporter implements Reporter {
     return entity.name;
   }
 
-  getFinishTestItemObj(entity: ReportedEntity): FinishTestItemObjType {
-    const finishTestItemObj: FinishTestItemObjType = {
+  getFinishTestItemObj(entity: ReportedEntity): FinishTestItemOptions {
+    const finishTestItemObj: FinishTestItemOptions = {
       status: STATUSES.FAILED,
       endTime: clientHelpers.now(),
     };
@@ -271,7 +271,7 @@ export class RPReporter implements Reporter {
 
   applyReportingApiMeta(
     testCase: TestCase,
-    finishTestItemObj: FinishTestItemObjType,
+    finishTestItemObj: FinishTestItemOptions,
     testItemId: string,
   ) {
     const meta = testCase.meta?.();
@@ -299,7 +299,7 @@ export class RPReporter implements Reporter {
 
   reportErrors(
     errors: ReadonlyArray<{ message?: string; stack?: string; diff?: string }> | undefined,
-    finishTestItemObj: FinishTestItemObjType,
+    finishTestItemObj: FinishTestItemOptions,
     testItemId: string,
   ) {
     if (!errors?.length) {
@@ -315,7 +315,7 @@ export class RPReporter implements Reporter {
     }
 
     const logMessage = firstError.stack || firstError.message || 'Unknown error';
-    const logRq: LogRQ = {
+    const logRq: LogOptions = {
       time: finishTestItemObj.endTime,
       level: PREDEFINED_LOG_LEVELS.ERROR,
       message: logMessage,
@@ -323,7 +323,7 @@ export class RPReporter implements Reporter {
     this.sendLog(testItemId, logRq);
 
     if ('diff' in firstError && firstError.diff) {
-      const logRqDiff: LogRQ = {
+      const logRqDiff: LogOptions = {
         time: finishTestItemObj.endTime,
         level: PREDEFINED_LOG_LEVELS.ERROR,
         message: `\`\`\`diff\n${firstError.diff}\n\`\`\``,
@@ -332,7 +332,7 @@ export class RPReporter implements Reporter {
     }
   }
 
-  sendLog(testItemId: string, logRq: LogRQ): void {
+  sendLog(testItemId: string, logRq: LogOptions): void {
     const { file, ...logRqWithoutFile } = logRq;
     const { promise } = this.client.sendLog(
       testItemId,
@@ -359,7 +359,7 @@ export class RPReporter implements Reporter {
       level = isErrorLog(content) ? PREDEFINED_LOG_LEVELS.ERROR : PREDEFINED_LOG_LEVELS.WARN;
     }
 
-    const logRq: LogRQ = {
+    const logRq: LogOptions = {
       time: time,
       level,
       message: content,

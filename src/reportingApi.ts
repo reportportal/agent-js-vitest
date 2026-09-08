@@ -1,5 +1,6 @@
 import * as vitest from 'vitest';
 import clientHelpers from '@reportportal/client-javascript/helpers';
+import type { Attachment, Attribute } from '@reportportal/client-javascript/models';
 import * as Models from './models';
 import { isRPTaskMeta } from './utils';
 
@@ -19,7 +20,7 @@ const injectRPTaskMeta = (task: vitest.RunnerTask) => {
   };
 };
 
-const attachment = (task: vitest.RunnerTask, data: Models.Attachment, description?: string) => {
+const attachment = (task: vitest.RunnerTask, data: Attachment, description?: string) => {
   injectRPTaskMeta(task);
   (task.meta as Models.RPTaskMeta).rpMeta.test.logs.push({
     file: data,
@@ -28,7 +29,7 @@ const attachment = (task: vitest.RunnerTask, data: Models.Attachment, descriptio
   });
 };
 
-const attributes = (task: vitest.RunnerTask, data: Models.Attribute[]) => {
+const attributes = (task: vitest.RunnerTask, data: Attribute[]) => {
   injectRPTaskMeta(task);
   const rpMeta = (task.meta as Models.RPTaskMeta).rpMeta;
   rpMeta.test.attributes = [...rpMeta.test.attributes, ...data];
@@ -71,8 +72,8 @@ export const ReportingApi: Models.ReportingApi = {
 };
 
 export const bindReportingApi = (task: vitest.RunnerTask): Models.GlobalReportingApi => ({
-  attachment: (data: Models.Attachment, message?: string) => attachment(task, data, message),
-  attributes: (data: Models.Attribute[]) => attributes(task, data),
+  attachment: (data: Attachment, message?: string) => attachment(task, data, message),
+  attributes: (data: Attribute[]) => attributes(task, data),
   testCaseId: (data: string) => testCaseId(task, data),
   description: (data: string) => description(task, data),
   log: (message: string, level: Models.LOG_LEVELS = Models.PREDEFINED_LOG_LEVELS.INFO) =>

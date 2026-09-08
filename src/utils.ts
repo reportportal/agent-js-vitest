@@ -19,7 +19,8 @@ import { normalize, sep } from 'node:path';
 import * as vitest from 'vitest';
 // @ts-ignore to not include copy of package.json to the build
 import { name as pjsonName, version as pjsonVersion } from '../package.json';
-import { Attribute, RPTaskMeta } from './models';
+import type { Attribute } from '@reportportal/client-javascript/models';
+import { RPTaskMeta } from './models';
 
 const getFrameworkVersion = (): string => {
   try {

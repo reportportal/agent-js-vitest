@@ -16,27 +16,13 @@
  */
 // eslint-disable-next-line import/named
 import { RunnerTask, TaskMeta } from 'vitest';
-import type {
-  StartLaunchOptions,
-  StartTestItemOptions,
-  FinishTestItemOptions,
-  LogOptions,
-  Attachment,
-  Attribute,
-} from '@reportportal/client-javascript/models';
+import type { LogOptions, Attachment, Attribute } from '@reportportal/client-javascript/models';
 import { LOG_LEVELS } from '../constants';
-
-// Aliases to the client-javascript request/model types under the agent's historical names.
-export type StartLaunchObjType = StartLaunchOptions;
-export type StartTestObjType = StartTestItemOptions;
-export type FinishTestItemObjType = FinishTestItemOptions;
-export type LogRQ = LogOptions;
-export { Attachment };
 
 export interface RPTaskMeta extends TaskMeta {
   rpMeta: {
     test: {
-      logs: LogRQ[];
+      logs: LogOptions[];
       attributes: Attribute[];
       testCaseId?: string;
       description?: string;
