@@ -15,8 +15,11 @@
  *
  */
 
-export { LAUNCH_MODES } from './launchModes';
-export { TEST_ITEM_TYPES } from './testItemTypes';
-export { STATUSES } from './statuses';
-export { PREDEFINED_LOG_LEVELS, LOG_LEVELS } from './logLevels';
+export {
+  LAUNCH_MODES,
+  TEST_ITEM_TYPES,
+  STATUSES,
+  PREDEFINED_LOG_LEVELS,
+  LOG_LEVELS,
+} from '@reportportal/client-javascript/constants';
 export { TASK_STATUS, TASK_MODE, FINISHED_STATES } from './vitest';

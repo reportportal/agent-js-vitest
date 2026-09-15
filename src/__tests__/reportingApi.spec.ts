@@ -1,5 +1,5 @@
 import type { RunnerTask } from 'vitest';
-import clientHelpers from '@reportportal/client-javascript/lib/helpers';
+import clientHelpers from '@reportportal/client-javascript/helpers';
 import { ReportingApi, bindReportingApi } from '../reportingApi';
 import { getTask } from './mocks/data';
 import { mockedDate } from './mocks/RPClientMock';

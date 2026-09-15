@@ -15,30 +15,14 @@
  *
  */
 
-import {
-  StartLaunchObjType,
-  StartTestObjType,
-  FinishTestItemObjType,
-  LogRQ,
-  Attachment,
-  RPTaskMeta,
-  ReportingApi,
-  GlobalReportingApi,
-} from './reporting';
+import { RPTaskMeta, ReportingApi, GlobalReportingApi } from './reporting';
 import { ReportPortalConfig } from './configs';
-import { Attribute } from './common';
 import { LOG_LEVELS, PREDEFINED_LOG_LEVELS } from '../constants';
 export {
-  StartLaunchObjType,
-  StartTestObjType,
-  FinishTestItemObjType,
   ReportPortalConfig,
-  Attachment,
-  Attribute,
   RPTaskMeta,
   ReportingApi,
   GlobalReportingApi,
-  LogRQ,
   LOG_LEVELS,
   PREDEFINED_LOG_LEVELS,
 };

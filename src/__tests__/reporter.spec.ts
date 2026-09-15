@@ -1,5 +1,5 @@
 import type { UserConsoleLog } from 'vitest';
-import clientHelpers from '@reportportal/client-javascript/lib/helpers';
+import clientHelpers from '@reportportal/client-javascript/helpers';
 import { RPReporter } from '../reporter';
 import { config } from './mocks/configMock';
 import { RPClientMock, mockedDate } from './mocks/RPClientMock';

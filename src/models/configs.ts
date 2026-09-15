@@ -15,44 +15,13 @@
  *
  */
 
-import { type AxiosRequestConfig } from 'axios';
-import { AgentOptions } from 'https';
-
-import { Attribute } from './common';
-import { LAUNCH_MODES } from '../constants';
-
-export interface RestClientConfig extends AxiosRequestConfig {
-  agent?: AgentOptions;
-}
-
-interface ClientConfig {
-  project: string;
-  endpoint: string;
-  launch: string;
-  apiKey?: string;
-  oauth?: {
-    tokenEndpoint: string;
-    username: string;
-    password: string;
-    clientId: string;
-    clientSecret?: string;
-    scope?: string;
-  };
-
-  debug?: boolean;
-  isLaunchMergeRequired?: boolean; // not used for this agent
-  restClientConfig?: RestClientConfig;
-  headers?: Record<string, string>;
-}
+import type { ReportPortalConfig as ClientConfig } from '@reportportal/client-javascript/models';
 
 export interface ReportPortalConfig extends ClientConfig {
-  // common options
+  // common options (attributes, description, mode are inherited from the client config)
   launchId?: string;
-  attributes?: Array<Attribute>;
-  description?: string;
   rerun?: boolean;
   rerunOf?: string;
-  mode?: LAUNCH_MODES;
 
   // agent specific options
   skippedIssue?: boolean;
